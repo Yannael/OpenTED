@@ -1,0 +1,38 @@
+.extraspace{
+  height:50px;
+}
+
+.extraspace2{
+  height:400px;
+}
+
+.span4 {
+	min-width: 200px;
+	max-width: 200px;
+}
+
+.span8 {
+	min-width: 500px;
+	max-width: 500px;
+
+}
+
+
+.container-fluid {
+	min-width: 1000px;
+	max-width: 1000px;
+	float:none;
+	margin:0 auto;
+}
+
+body {
+font-family: Georgia, serif;
+background-color: #282828;
+} 
+
+div.container-fluid {
+background-color: #FFFFFF;
+}
+
+
+
