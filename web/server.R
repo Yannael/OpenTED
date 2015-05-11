@@ -4,14 +4,37 @@ library(ggplot2)
 
 shinyServer(function(input, output) {
   
+  sessionData <- reactiveValues()
+  
   #Modify range of session data to display according to date range
+  updateAwardsNotice<-function(selectAuthorityCountry, dateRange, fields) {
+    if (selectAuthorityCountry!="All") country_select<-paste0(" and contract_authority_country='",input$selectAuthorityCountry,"' ")
+    else country_select<-""
+    fields<-nameFields[match(fields,names(nameFields))]
+    con <- dbConnect(RSQLite::SQLite(), "../TED_award_notices.db")
+    rs<-dbSendQuery(con,paste0("select ", paste(fields,collapse=",")," 
+                                   from contracts 
+                                   where 
+                                   document_oj_date>'",dateRange[1],"' ", 
+                                   "and document_oj_date<'",dateRange[2],"' ",
+                                   #"and contract_contract_value_cost_eur>0 ",
+                                   country_select,
+                                   " ORDER BY document_oj_date ASC
+                                   "))
+    awardNotices = fetch(rs, n=-1)
+    dbClearResult(rs)
+    dbDisconnect(con) 
+    colnames(awardNotices)<-names(nameFields)[match(fields,nameFields)]
+    awardNotices
+  }
+  
   observe({
-      if (length(input$dateRange)>0) {
-        data<-sessionData$alldata
-        to.keep<-which(sessionData$alldata[,'document_oj_date']>=input$dateRange[1] & sessionData$alldata[,'document_oj_date']<=input$dateRange[2])
-        data<-data[to.keep,]
-        sessionData$data<-data[sort(data[,'document_oj_date'],index.return=T)$ix,]
-      }
+    input$applySelection
+    isolate({
+    if (length(input$dateRange)>0 & (length(input$selectAuthorityCountry)>0) & (length(input$fields$right)>0)) {
+      sessionData$data<-updateAwardsNotice(input$selectAuthorityCountry,input$dateRange,input$fields$right)
+    }
+    })
   })
   
   #Returns a bar plot with the number of award notices per contract authority country
@@ -38,26 +61,11 @@ shinyServer(function(input, output) {
   #Returns the dataset in the form of a table, filtered by country
   output$awardTable<-renderDataTable({
     sessionData$data
-    country<-input$selectAuthorityCountry
-    #Only valid once a country is selected
-    if (length(country)>0) {
-      #Get data from session data, according to country selection
-      if (country=="All")
-        data<-sessionData$data
-      else 
-        data<-sessionData$data[which(data<-sessionData$data[,'contract_authority_country']==country),]
-      
-      #Let's columns have nice names
-      colnames(data)<-c("Official journal date","Award notice ID","Contract authority country","Contract authority official name","Contractor country","Contractor official name","Contract value (EUR)","Award criteria","CPV code")
-      
-      #Create table and send it to UI
-      data
-    }
   },
   escape=F,#This so HTML links are properly rendered
   options=list(
-    lengthMenu = list(c(10, 100, -1), c('10', '100','All')),pageLength = 10,
-    autoWidth = FALSE
+    lengthMenu = list(c(10, 100, -1), c('10', '100','All')),pageLength = 10,search=list(regex=T),
+    autoWidth = T,aoColumnDefs = list(list(sClass="alignRight",aTargets="_all"))
   )
   )
   

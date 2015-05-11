@@ -16,7 +16,7 @@ dbDisconnect(con)
 
 #Get subset of fields of interest from DB
 con <- dbConnect(RSQLite::SQLite(), "TED.db")
-rs<-dbSendQuery(con,"select document_oj_date,contract_doc_no,contract_authority_country, contract_authority_official_name, contract_operator_country, contract_operator_official_name,contract_contract_value_cost_eur,document_award_criteria,contract_cpv_code from contracts where contract_contract_value_cost_eur>0")
+rs<-dbSendQuery(con,"select document_oj_date,contract_doc_no,contract_location_nuts, contract_authority_country, contract_authority_official_name, contract_appeal_body_slug, contract_operator_slug, contract_operator_country, contract_operator_official_name,contract_contract_value_cost_eur,contract_offers_received_num,document_award_criteria,contract_cpv_code from contracts")
 data_sub = fetch(rs, n=-1)
 dbClearResult(rs)
 dbDisconnect(con)
@@ -53,9 +53,28 @@ data[,'contract_doc_no']<-linkDoc
 ##################
 
 #Create a subset DB for fields of interests
-con <- dbConnect(RSQLite::SQLite(), "TED_curated_contracts.db")
+con <- dbConnect(RSQLite::SQLite(), "TED_award_notices.db")
 dbWriteTable(con,"contracts",data)
 dbDisconnect(con)
 
 #Note: Original DB is about 3GB. The resulting TED_curated_contracts.db file is about 250MB.
+
+
+#Save countries present in DB 
+#Note there are errors in the dataset, some country ID are clearly not right, e.g., "1A"
+authority_countries<-sort(unique(data[,'contract_authority_country']))
+write.table(file="authority_countries.txt",authority_countries,row.names=F,col.names=F)
+
+operator_countries<-sort(unique(data[,'contract_operator_country']))
+write.table(file="operator_countries.txt",operator_countries,row.names=F,col.names=F)
+
+CPV_code<-sort(unique(data[,'contract_cpv_code']))
+write.table(file="CPV_code.txt",CPV_code,row.names=F,col.names=F)
+
+#Save names of fields and their 'nice' meaning
+nameFields<-colnames(data)
+nameFields<-cbind(nameFields,c("Official journal date","Award notice ID","Contract location NUTS", "Contract authority country","Contract authority name","Contract appeal body SLUG","Contract operator SLUG","Contract operator country","Contractor name","Contract value (EUR)","Number offers received","Award criteria","CPV code"))
+write.table(file="nameFields.txt",nameFields,row.names=F,col.names=F)
+
+
 

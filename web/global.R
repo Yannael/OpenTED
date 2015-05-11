@@ -1,19 +1,12 @@
 #This script loads the data from TED database (CSV exported to SQLite database - see preprocessing.R), 
 #and stores a subset of in session data 
 
-#Create session data
-sessionData <- reactiveValues()
+authority_countries<-c("All",read.table("../authority_countries.txt",stringsAsFactors=F))
+operator_countries<-c("All",read.table("../operator_countries.txt",stringsAsFactors=F))
+CPV_code<-read.table("../CPV_code.txt",stringsAsFactors=F)
 
-#Get relevant data from TED DB
-con <- dbConnect(RSQLite::SQLite(), "../TED_curated_contracts.db")
-rs<-dbSendQuery(con,"select document_oj_date,contract_doc_no,contract_authority_country, contract_authority_official_name, contract_operator_country, contract_operator_official_name,contract_contract_value_cost_eur,document_award_criteria,contract_cpv_code from contracts where contract_contract_value_cost_eur>0")
-data = fetch(rs, n=-1)
-dbClearResult(rs)
-dbDisconnect(con)
+dataNamesFields<-read.table("../nameFields.txt",stringsAsFactors=F)
+nameFields<-dataNamesFields[,1]
+names(nameFields)<-dataNamesFields[,2]
 
-#Get countries infos
-countries<-c("All",sort(unique(data[,'contract_authority_country'])))
-
-#Store in session data
-sessionData$alldata<-data
-sessionData$data<-data
+defaultFieldsDisplay<-names(nameFields[c(1,2,4,5,8,9,10,11,13)])

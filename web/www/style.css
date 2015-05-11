@@ -3,7 +3,11 @@
 }
 
 .extraspace2{
-  height:400px;
+  height:225px;
+}
+
+.extraspace3{
+  height:5px;
 }
 
 .span4 {
@@ -16,7 +20,6 @@
 	max-width: 500px;
 
 }
-
 
 .container-fluid {
 	min-width: 1000px;
@@ -34,5 +37,5 @@ div.container-fluid {
 background-color: #FFFFFF;
 }
 
-
+.table .alignRight {text-align:right;}
 
