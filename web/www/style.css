@@ -10,6 +10,19 @@
   height:5px;
 }
 
+.extraspace4{
+  height:40px;
+}
+
+.extraspace5{
+  height:20px;
+}
+
+.fontsite {
+font-family: Georgia, serif;
+font-size: 16px;
+} 
+
 .span4 {
 	min-width: 200px;
 	max-width: 200px;
@@ -37,5 +50,7 @@ div.container-fluid {
 background-color: #FFFFFF;
 }
 
-.table .alignRight {text-align:right;}
+.chooser-center-container{
+  vertical-align:top;
+}
 

@@ -36,7 +36,7 @@ shinyUI(
                                                    )
                                                  ),
                                                  fluidRow(
-                                                   selectInput("select CPV code", label = h5(strong("CPV code")), 
+                                                   selectInput("selectCPVcode", label = h5(strong("CPV code")), 
                                                                choices = CPV_code, 
                                                                selected = "UK"
                                                    )
@@ -44,34 +44,32 @@ shinyUI(
                                  ),
                                  column(6,
                                         fluidRow(
-                                          tags$div(class="extraspace3"),
-                                          chooserInput("fields", "Available fields", "Selected fields",
-                                                       setdiff(names(nameFields),defaultFieldsDisplay), defaultFieldsDisplay, size = 10, multiple = TRUE
+                                          #tags$div(class="extraspace3"),
+                                          h5(strong("Select columns to display")),
+                                          chooserInput("fields", "Selected fields", "Unselected fields",
+                                                       defaultFieldsDisplay, setdiff(names(nameFields),defaultFieldsDisplay), 
+                                                       size = 13, multiple = TRUE
                                           )  
                                         )
                                  )),
                                  fluidRow(
-                                   actionButton("applySelection","Apply selection"),
+                                   actionButton("applySelection","Apply selection",class="btn btn-primary"),
                                    align="center"
                                  )
                                ),
                                hr(),
                                h3(strong("Award notices")),
                                hr(),
-                               downloadButton('outputId', label = "Download CSV", class = NULL),
-                               downloadButton('outputId2', label = "Download CSV for Gephi", class = NULL),
+                               downloadButton('downloadAwards', label = "Download CSV", class = NULL),
+                               downloadButton('downloadAwardsGephi', label = "Download CSV for Gephi", class = NULL),
                                hr(),
                                dataTableOutput('awardTable'),
                                tags$style(type="text/css", 'tfoot {display:none;}')
                         )
                ),
                tabPanel("About",
-                        h3("Total award notices per country"),
-                        #plotOutput('authorityCountryBarPlot'),
-                        tags$div(class="extraspace2"),
-                        h3("Total award value per country"),
-                        #plotOutput('valueCountryBarPlot'),
-                        tags$div(class="extraspace2")
+                        tags$div(class="extraspace5"),
+                        includeMarkdown("README.md")
                )
              )
       )
@@ -79,3 +77,4 @@ shinyUI(
     tags$div(class="extraspace")
   )
 )
+

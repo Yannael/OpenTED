@@ -76,5 +76,27 @@ nameFields<-colnames(data)
 nameFields<-cbind(nameFields,c("Official journal date","Award notice ID","Contract location NUTS", "Contract authority country","Contract authority name","Contract appeal body SLUG","Contract operator SLUG","Contract operator country","Contractor name","Contract value (EUR)","Number offers received","Award criteria","CPV code"))
 write.table(file="nameFields.txt",nameFields,row.names=F,col.names=F)
 
+#Returns a bar plot with the number of award notices per contract authority country
+output$authorityCountryBarPlot<-renderPlot({
+  data<-sessionData$data
+  uniqueAuthorityContract<-unique(data[,c('contract_doc_no','contract_authority_country')])
+  plot_return<-ggplot(uniqueAuthorityContract, aes(factor(contract_authority_country)))+
+    geom_bar()+coord_flip()+
+    xlab("Country")+
+    ylab("Number of award notices")
+  plot_return
+}, height = 800, width = 900)
+
+#Returns a bar plot with the total value of awards (in Euro) per contract authority country
+output$valueCountryBarPlot<-renderPlot({
+  data<-sessionData$data
+  plot_return<-ggplot(data,aes(contract_authority_country,y=contract_contract_value_cost_eur))+
+    geom_bar(stat="identity")+coord_flip()+
+    xlab("Country")+
+    ylab("Total value of awards")
+  plot_return
+}, height = 800, width = 900)
+
+
 
 
