@@ -41,3 +41,4 @@ registerInputHandler("shinyjsexamples.chooser", function(data, ...) {
   else
     list(left=as.character(data$left), right=as.character(data$right))
 }, force = TRUE)
+
