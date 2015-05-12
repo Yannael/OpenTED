@@ -1,4 +1,5 @@
 library(shiny)
+library(markdown)
 source("chooser.R")
 
 shinyUI(

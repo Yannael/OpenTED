@@ -1,6 +1,5 @@
 library(shiny)
 library(RMySQL)
-library(ggplot2)
 
 shinyServer(function(input, output) {
   
@@ -15,7 +14,7 @@ shinyServer(function(input, output) {
     if (CPVcode!="All") CPV_code_select<-paste0(" and contract_cpv_code='",CPVcode,"' ")
     else CPV_code_select<-""
     fields<-nameFields[match(fields,names(nameFields))]
-    con <- dbConnect(RSQLite::SQLite(), "../TED_award_notices.db")
+    con <- dbConnect(RSQLite::SQLite(), "data/TED_award_notices.db")
     rs<-dbSendQuery(con,paste0("select ", paste(fields,collapse=",")," 
                                    from contracts 
                                    where 
