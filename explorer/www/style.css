@@ -54,3 +54,29 @@ background-color: #FFFFFF;
   vertical-align:top;
 }
 
+ul.ColVis_collection {
+  width:250px;
+  margin-left:-110px;
+}
+
+tr {
+  height:50px;
+}
+
+#dataTables_scrollBody {
+  margin-top:50px!important;
+  height:50px!important;
+  overflow:'visible'!important;
+  z-index:-15!important;
+}
+#dataTables_scrollHead {
+  margin-bottom:50px!important;
+  height:100px!important;
+  overflow:'visible'!important;
+  z-index:15!important;
+}
+
+.datatable-scroll {
+    overflow-x: auto;
+    overflow-y: visible;
+}

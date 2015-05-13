@@ -9,4 +9,5 @@ dataNamesFields<-read.table("data/nameFields.txt",stringsAsFactors=F)
 nameFields<-dataNamesFields[,1]
 names(nameFields)<-dataNamesFields[,2]
 
-defaultFieldsDisplay<-names(nameFields[c(1,2,4,5,8,9,10,11,13)])
+#defaultFieldsDisplay<-names(nameFields[c(1,2,4,5,8,9,10,11,13)])#
+defaultFieldsDisplay<-names(nameFields[1:13])
