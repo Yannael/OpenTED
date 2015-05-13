@@ -1,6 +1,6 @@
 library(shiny)
 library(markdown)
-source("chooser.R")
+library(DT)
 
 shinyUI(
   fluidPage(    
@@ -12,9 +12,9 @@ shinyUI(
     fluidRow(
       column(12,
              tabsetPanel(
-               tabPanel("Award notices 2012/2015", 
+               tabPanel(h5(strong("TED Award Notices 2012/2015")), 
                         column(12,
-                               checkboxInput("filters", label = "Show advanced selectors", value = F),
+                               checkboxInput("filters", label = "Show filtering options", value = F),
                                conditionalPanel(
                                  condition = "input.filters== 1",
                                  fluidRow(column(6,
@@ -35,40 +35,49 @@ shinyUI(
                                                                choices = operator_countries, 
                                                                selected = "All"
                                                    )
-                                                 ),
-                                                 fluidRow(
-                                                   selectInput("selectCPVcode", label = h5(strong("CPV code")), 
-                                                               choices = CPV_code, 
-                                                               selected = "UK"
-                                                   )
                                                  )
                                  ),
                                  column(6,
                                         fluidRow(
-                                          #tags$div(class="extraspace3"),
-                                          h5(strong("Select columns to display")),
-                                          chooserInput("fields", "Selected fields", "Unselected fields",
-                                                       defaultFieldsDisplay, setdiff(names(nameFields),defaultFieldsDisplay), 
-                                                       size = 13, multiple = TRUE
-                                          )  
+                                          column(6,
+                                                 textInput("CPVFrom",label = h5(strong("CPV code from")), 
+                                                           value = "")),
+                                          column(2,
+                                                 textInput("CPVTo",label = h5(strong("to")), 
+                                                           value = ""))
+                                        ),
+                                        fluidRow(
+                                          column(6,
+                                                 textInput("valueFrom",label = h5(strong("Contract value from")), 
+                                                           value = "")),
+                                          column(2,
+                                                 textInput("valueTo",label = h5(strong("to")), 
+                                                           value = ""))
+                                          
+                                        ),
+                                        fluidRow(
+                                          column(6,
+                                                 textInput("nbOffersFrom",label = h5(strong("Number of offers from")), 
+                                                           value = "")),
+                                          column(2,
+                                                 textInput("nbOffersTo",label = h5(strong("to")), 
+                                                           value = ""))
+                                          
                                         )
-                                 )),
+                                 )
+                                 ),
                                  fluidRow(
                                    actionButton("applySelection","Apply selection",class="btn btn-primary"),
                                    align="center"
                                  )
                                ),
-                               hr(),
-                               h3(strong("Award notices")),
-                               hr(),
-                               downloadButton('downloadAwards', label = "Download CSV", class = NULL),
-                               downloadButton('downloadAwardsGephi', label = "Download CSV for Gephi", class = NULL),
-                               hr(),
-                               dataTableOutput('awardTable'),
-                               tags$style(type="text/css", 'tfoot {display:none;}')
+                               DT::dataTableOutput('awardTable'),
+                               tags$div(class="extraspace5"),
+                               downloadButton('downloadAwards', label = "Download CSV", class = NULL)
+                               #downloadButton('downloadAwardsGephi', label = "Download GEXF (Gephi)", class = NULL)
                         )
                ),
-               tabPanel("About",
+               tabPanel(h5(strong("About")),
                         tags$div(class="extraspace5"),
                         includeMarkdown("README.md")
                )

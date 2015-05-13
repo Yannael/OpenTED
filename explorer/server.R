@@ -1,19 +1,24 @@
 library(shiny)
 library(RMySQL)
+library(DT)
 
-shinyServer(function(input, output) {
+shinyServer(function(input, output,session) {
   
   sessionData <- reactiveValues()
   
-  #Modify award notices to display according to date/country/CPV/fields selectors
-  updateAwardsNotice<-function(authorityCountry, operatorCountry, dateRange, fields, CPVcode) {
+  #Modify award notices according to date/countries/CPV/value/offers filters
+  updateAwardsNotice<-function(authorityCountry, operatorCountry, dateRange, CPVFrom, CPVTo, valueFrom, valueTo, nbOffersFrom, nbOffersTo) {
+    fields<-nameFields[1:13]
     if (authorityCountry!="All") country_select_authority<-paste0(" and contract_authority_country='",authorityCountry,"' ")
     else country_select_authority<-""
     if (operatorCountry!="All") country_select_operator<-paste0(" and contract_operator_country='",operatorCountry,"' ")
     else country_select_operator<-""
-    if (CPVcode!="All") CPV_code_select<-paste0(" and contract_cpv_code='",CPVcode,"' ")
-    else CPV_code_select<-""
-    fields<-nameFields[match(fields,names(nameFields))]
+    CPV<-""
+    if ((CPVFrom!="") & (CPVTo != "")) CPV<-paste0(" and contract_cpv_code>=",CPVFrom," and contract_cpv_code<=",CPVTo)
+    value<-""
+    if ((valueFrom!="") & (valueTo != "")) value<-paste0(" and contract_contract_value_cost_eur>=",valueFrom," and contract_contract_value_cost_eur<=",valueTo)
+    nbOffers<-""
+    if ((nbOffersFrom!="") & (nbOffersTo != "")) nbOffers<-paste0(" and contract_offers_received_num>=",nbOffersFrom," and contract_offers_received_num<=",nbOffersTo)
     con <- dbConnect(RSQLite::SQLite(), "data/TED_award_notices.db")
     rs<-dbSendQuery(con,paste0("select ", paste(fields,collapse=",")," 
                                    from contracts 
@@ -22,9 +27,11 @@ shinyServer(function(input, output) {
                                    "and document_oj_date<'",dateRange[2],"' ",
                                    country_select_authority,
                                    country_select_operator,
-                                   CPV_code_select,
-                                   " ORDER BY document_oj_date ASC
-                                   "))
+                                   CPV,
+                                   value,
+                                   nbOffers,
+                                   " ORDER BY document_oj_date ASC"
+                               ))
     awardNotices = fetch(rs, n=-1)
     dbClearResult(rs)
     dbDisconnect(con) 
@@ -36,22 +43,47 @@ shinyServer(function(input, output) {
   observe({
     input$applySelection
     isolate({
-    if (length(input$dateRange)>0 & (length(input$selectAuthorityCountry)>0) & (length(input$fields$left)>0) & (length(input$selectCPVcode)>0)) {
-      sessionData$data<-updateAwardsNotice(input$selectAuthorityCountry,input$selectOperatorCountry,input$dateRange,input$fields$left, input$selectCPVcode)
-    }
+      sessionData$data<-updateAwardsNotice(input$selectAuthorityCountry,input$selectOperatorCountry,input$dateRange, input$CPVFrom, input$CPVTo, input$valueFrom, input$valueTo, input$nbOffersFrom, input$nbOffersTo)
     })
   })
   
-  #Returns the dataset in the form of a table, filtered by country
-  output$awardTable<-renderDataTable({
-    sessionData$data
-  },
-  escape=F,#This so HTML links are properly rendered
-  options=list(
-    lengthMenu = list(c(10, 100, -1), c('10', '100','All')),pageLength = 10,search=list(regex=T),
-    autoWidth = T,aoColumnDefs = list(list(sClass="alignRight",aTargets="_all"))
-  )
-  )
+  #Returns the dataset in the form of a table
+  output$awardTable<-DT::renderDataTable({
+    data<-sessionData$data
+    if (!is.null(dim(data))) {
+    action = dataTableAjax(session, data)
+    widget = datatable(data, 
+                       server = TRUE, 
+                       extensions = c('ColVis','Scroller'),
+                       escape=F,
+                       #filter = 'top',
+                       options = list(
+                         dom= 'CrtSi',
+                         scrollX = TRUE,
+                         deferRender = TRUE,
+                         scrollY = 500,
+                         scrollCollapse = T,
+                         ajax = list(url = action),
+                         colVis=list(exclude=c(0)),
+                         autoWidth = T,
+                         columnDefs = list(list(className="dt-right",targets="_all"), 
+                                           list(visible=F,targets=c(0,3,6,9,12)), 
+                                           list(width='130px',targets="_all"),
+                                           #list(targets = c(1:9,12), searchable = TRUE),
+                                           list(
+                                             targets = c(3,5,6,8,9),
+                                             render = JS(
+                                               "function(data, type, row, meta) {",
+                                               "return type === 'display' && data.length > 15 ?",
+                                               "'<span title=\"' + data + '\">' + data.substr(0, 15) + '...</span>' : data;",
+                                               "}")
+                                           )
+                         )
+                       )
+    )
+    widget
+    }
+  })
   
   output$downloadAwards <- downloadHandler(
        filename = function() {
