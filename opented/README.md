@@ -4,6 +4,10 @@
 
 * Data are from [OpenTED](http://ted.openspending.org/), for the period 2012-01-31 / 2015-02-27. By default, it retrieves all data for the period 2015-01-01 / 2015-02-28. You can change this (and other fields) using the filter checkbox.
 
+#### Online interface 
+
+https://elnaya.shinyapps.io/opented
+
 #### Notes
 
 * There are 1,5 million notices in total. Due to server limits, the maximum number of notices you can retrieve in a query is 500000. You will be notified by a warning message if your query exceeds this limit.
