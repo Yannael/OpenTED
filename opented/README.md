@@ -6,7 +6,7 @@
 
 #### Notes
 
-* There are 1,5 million notices in total. Due to server limits, the maximum number of notices you can retrieve in a query is 500000. You will be notified by a warning message if your query exceeds this limits.
+* There are 1,5 million notices in total. Due to server limits, the maximum number of notices you can retrieve in a query is 500000. You will be notified by a warning message if your query exceeds this limit.
 
 * There are missing data in the award notices, and even erroneous data. This is independent of OpenTED data. To the best of our knowledge, data are the same as those available from the official TED EU site. Let us know if you spot any inconsistencies.
 
