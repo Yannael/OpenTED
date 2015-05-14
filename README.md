@@ -1,6 +1,10 @@
+#### Online interface 
+
+https://elnaya.shinyapps.io/opented
+
 #### Description
 
-See README in opented folder
+See [README in `opented` folder](https://github.com/Yannael/OpenTED/tree/master/opented)
 
 #### Installation
 
