@@ -2,18 +2,6 @@
   height:50px;
 }
 
-.extraspace2{
-  height:225px;
-}
-
-.extraspace3{
-  height:5px;
-}
-
-.extraspace4{
-  height:40px;
-}
-
 .extraspace5{
   height:20px;
 }
@@ -50,10 +38,12 @@ div.container-fluid {
 background-color: #FFFFFF;
 }
 
-.chooser-center-container{
-  vertical-align:top;
+ul.ColVis_collection {
+  width:250px;
+  margin-left:-110px;
 }
 
+<<<<<<< HEAD:explorer/www/style.css
 ul.ColVis_collection {
   width:250px;
   margin-left:-110px;
@@ -80,3 +70,13 @@ tr {
     overflow-x: auto;
     overflow-y: visible;
 }
+=======
+#CPVFrom {width: 200px}
+#CPVTo {width: 200px}
+#valueFrom {width: 200px}
+#valueTo {width: 200px}
+#nbOffersFrom {width: 200px}
+#nbOffersTo {width: 200px}
+
+#download {float:right;}
+>>>>>>> DT:opented/www/style.css
