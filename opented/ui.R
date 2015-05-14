@@ -5,7 +5,7 @@ library(DT)
 shinyUI(
   fluidPage(    
     includeCSS('www/style.css'),
-    tags$head(includeScript("statcounter.js")),
+    tags$head(includeScript("analytics.js")),
     fluidRow(
       img(src="TEDbanner.png", height = 122, width = 1000)
     ),
