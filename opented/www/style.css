@@ -1,0 +1,53 @@
+.extraspace{
+  height:50px;
+}
+
+.extraspace5{
+  height:20px;
+}
+
+.fontsite {
+font-family: Georgia, serif;
+font-size: 16px;
+} 
+
+.span4 {
+	min-width: 200px;
+	max-width: 200px;
+}
+
+.span8 {
+	min-width: 500px;
+	max-width: 500px;
+
+}
+
+.container-fluid {
+	min-width: 1000px;
+	max-width: 1000px;
+	float:none;
+	margin:0 auto;
+}
+
+body {
+font-family: Georgia, serif;
+background-color: #282828;
+} 
+
+div.container-fluid {
+background-color: #FFFFFF;
+}
+
+ul.ColVis_collection {
+  width:250px;
+  margin-left:-110px;
+}
+
+#CPVFrom {width: 200px}
+#CPVTo {width: 200px}
+#valueFrom {width: 200px}
+#valueTo {width: 200px}
+#nbOffersFrom {width: 200px}
+#nbOffersTo {width: 200px}
+
+#download {float:right;}
