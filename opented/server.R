@@ -18,8 +18,6 @@ shinyServer(function(input, output,session) {
       fields<-'count(1)'
     else fields<-paste(nameFields[1:13],collapse=",")
     
-    tryCatch(getURL(paste("http://litpc45.ulb.ac.be/opented",authorityCountry,operatorCountry,dateRange[1],dateRange[2],CPVFrom,CPVTo,valueFrom,valueTo,nbOffersFrom,nbOffersTo,collapse="",sep="_")),error=function(cond) {})
-    
     if (authorityCountry!="All") country_select_authority<-paste0(" and contract_authority_country='",authorityCountry,"' ")
     else country_select_authority<-""
     if (operatorCountry!="All") country_select_operator<-paste0(" and contract_operator_country='",operatorCountry,"' ")
