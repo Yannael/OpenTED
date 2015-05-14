@@ -43,34 +43,6 @@ ul.ColVis_collection {
   margin-left:-110px;
 }
 
-<<<<<<< HEAD:explorer/www/style.css
-ul.ColVis_collection {
-  width:250px;
-  margin-left:-110px;
-}
-
-tr {
-  height:50px;
-}
-
-#dataTables_scrollBody {
-  margin-top:50px!important;
-  height:50px!important;
-  overflow:'visible'!important;
-  z-index:-15!important;
-}
-#dataTables_scrollHead {
-  margin-bottom:50px!important;
-  height:100px!important;
-  overflow:'visible'!important;
-  z-index:15!important;
-}
-
-.datatable-scroll {
-    overflow-x: auto;
-    overflow-y: visible;
-}
-=======
 #CPVFrom {width: 200px}
 #CPVTo {width: 200px}
 #valueFrom {width: 200px}
@@ -79,4 +51,3 @@ tr {
 #nbOffersTo {width: 200px}
 
 #download {float:right;}
->>>>>>> DT:opented/www/style.css

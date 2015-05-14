@@ -1,9 +1,5 @@
 library(shiny)
 library(markdown)
-<<<<<<< HEAD:explorer/ui.R
-source("chooser.R")
-=======
->>>>>>> DT:opented/ui.R
 library(DT)
 
 shinyUI(
@@ -18,21 +14,6 @@ shinyUI(
     fluidRow(
       column(12,
              tabsetPanel(
-<<<<<<< HEAD:explorer/ui.R
-               tabPanel("Award notices 2012/2015", 
-                        
-                        dateRangeInput('dateRange',
-                                       label = h5(strong('Select period to cover (yyyy-mm-dd)')),
-                                       start = "2015-01-01", end = "2015-02-28"
-                        ),
-                        downloadButton('downloadAwards', label = "Download CSV", class = NULL),
-                        #downloadButton('downloadAwardsGephi', label = "Download CSV for Gephi", class = NULL),
-                        hr(),
-                        div(style = 'overflow-x: scroll;',DT::dataTableOutput('awardTable')),
-                        tags$style(type="text/css", 'thead {height:100px;}'),
-                        tags$style(type="text/css", '.dataTables_scroll {overflow:visible;}'),
-                        tags$div(class="extraspace")
-=======
                tabPanel(h5(strong("TED Award Notices 2012/2015")), 
                         column(12,
                                checkboxInput("filters", label = "Show filtering options", value = F),
@@ -102,7 +83,6 @@ shinyUI(
                                downloadButton('downloadAwards', label = "Download CSV", class = NULL)
                                #downloadButton('downloadAwardsGephi', label = "Download GEXF (Gephi)", class = NULL)
                         )
->>>>>>> DT:opented/ui.R
                ),
                tabPanel(h5(strong("About")),
                         tags$div(class="extraspace5"),

@@ -16,7 +16,7 @@ dbDisconnect(con)
 
 #Get subset of fields of interest from DB
 con <- dbConnect(RSQLite::SQLite(), "TED.db")
-rs<-dbSendQuery(con,"select document_oj_date,contract_doc_no,contract_location_nuts, contract_authority_country, contract_authority_official_name, contract_appeal_body_slug, contract_operator_country, contract_operator_official_name,contract_operator_slug, contract_contract_value_cost_eur,contract_offers_received_num,document_award_criteria,contract_cpv_code from contracts limit 50000")
+rs<-dbSendQuery(con,"select document_oj_date,contract_doc_no,contract_location_nuts, contract_authority_country, contract_authority_official_name, contract_appeal_body_slug, contract_operator_country, contract_operator_official_name,contract_operator_slug, contract_contract_value_cost_eur,contract_offers_received_num,document_award_criteria,contract_cpv_code from contracts")
 data = fetch(rs, n=-1)
 dbClearResult(rs)
 dbDisconnect(con)
