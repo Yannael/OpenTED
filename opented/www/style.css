@@ -51,3 +51,12 @@ ul.ColVis_collection {
 #nbOffersTo {width: 200px}
 
 #download {float:right;}
+
+.shiny-progress .bar {
+background-color: #4AA1FF;
+.opacity = 0.8;
+}
+.shiny-progress .progress {
+height:20px;
+}
+

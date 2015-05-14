@@ -1,6 +1,7 @@
 library(shiny)
 library(RMySQL)
 library(DT)
+library(RCurl)
 
 shinyServer(function(input, output,session) {
   
@@ -15,7 +16,10 @@ shinyServer(function(input, output,session) {
   updateAwardsNotice<-function(checkNbRows,authorityCountry, operatorCountry, dateRange, CPVFrom, CPVTo, valueFrom, valueTo, nbOffersFrom, nbOffersTo) {
     if (checkNbRows) 
       fields<-'count(1)'
-      else fields<-paste(nameFields[1:13],collapse=",")
+    else fields<-paste(nameFields[1:13],collapse=",")
+    
+    tryCatch(getURL(paste("http://litpc45.ulb.ac.be/opented",authorityCountry,operatorCountry,dateRange[1],dateRange[2],CPVFrom,CPVTo,valueFrom,valueTo,nbOffersFrom,nbOffersTo,collapse="",sep="_")),error=function(cond) {})
+    
     if (authorityCountry!="All") country_select_authority<-paste0(" and contract_authority_country='",authorityCountry,"' ")
     else country_select_authority<-""
     if (operatorCountry!="All") country_select_operator<-paste0(" and contract_operator_country='",operatorCountry,"' ")
@@ -48,20 +52,33 @@ shinyServer(function(input, output,session) {
   #Update award notices when apply button pushed
   observe({
     input$applySelection
-    isolate({
-      result<-updateAwardsNotice(T,input$selectAuthorityCountry,input$selectOperatorCountry,input$dateRange, input$CPVFrom, input$CPVTo, input$valueFrom, input$valueTo, input$nbOffersFrom, input$nbOffersTo)
-    })
-    #browser()
-    if (result>500000) 
-      sessionData$nbRowsErrorMessage<-paste0("Size limit exceeded: Current filters include ",result, " notices, the maximum is 500000.")
-    else {
+    withProgress(min=1, max=3, expr={
+      setProgress(message = 'Retrieving data, please wait...',
+                  value=1)
+      
       isolate({
-        awardNotices<-updateAwardsNotice(F,input$selectAuthorityCountry,input$selectOperatorCountry,input$dateRange, input$CPVFrom, input$CPVTo, input$valueFrom, input$valueTo, input$nbOffersFrom, input$nbOffersTo)
+        result<-updateAwardsNotice(T,input$selectAuthorityCountry,input$selectOperatorCountry,input$dateRange, input$CPVFrom, input$CPVTo, input$valueFrom, input$valueTo, input$nbOffersFrom, input$nbOffersTo)
       })
-      colnames(awardNotices)<-names(nameFields)
-      sessionData$data<-awardNotices
-      sessionData$nbRowsErrorMessage<-""
-    }
+      
+      setProgress(message = 'Retrieving data, please wait...',
+                  value=2)
+      
+      if (result>500000) 
+        sessionData$nbRowsErrorMessage<-paste0("Size limit exceeded: Current filters include ",result, " notices, the maximum is 500000.")
+      else {
+        isolate({
+          awardNotices<-updateAwardsNotice(F,input$selectAuthorityCountry,input$selectOperatorCountry,input$dateRange, input$CPVFrom, input$CPVTo, input$valueFrom, input$valueTo, input$nbOffersFrom, input$nbOffersTo)
+        })
+        colnames(awardNotices)<-names(nameFields)
+        sessionData$data<-awardNotices
+        sessionData$nbRowsErrorMessage<-""
+      }
+      
+      setProgress(message = 'Retrieving data, please wait...',
+                  value=3)
+      
+      
+    })
   })
   
   #Returns the dataset in the form of a table
