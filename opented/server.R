@@ -100,7 +100,7 @@ shinyServer(function(input, output,session) {
                            autoWidth = T,
                            columnDefs = list(list(className="dt-right",targets="_all"), 
                                              list(visible=F,targets=c(0,3,6,9,12)), 
-                                             list(width='130px',targets="_all"),
+                                             #list(width='130px',targets="_all"),
                                              #list(targets = c(1:9,12), searchable = TRUE),
                                              list(
                                                targets = c(3,5,6,8,9),
