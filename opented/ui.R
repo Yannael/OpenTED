@@ -27,13 +27,13 @@ shinyUI(
                                                    )
                                                  ),
                                                  fluidRow(
-                                                   selectInput("selectAuthorityCountry", label = h5(strong("Contract authority country")), 
+                                                   selectInput("selectAuthorityCountry", label = h5(strong("Government authority country")), 
                                                                choices = authority_countries, 
                                                                selected = "All"
                                                    )
                                                  ),
                                                  fluidRow(
-                                                   selectInput("selectOperatorCountry", label = h5(strong("Contract operator country")), 
+                                                   selectInput("selectOperatorCountry", label = h5(strong("Contractor country")), 
                                                                choices = operator_countries, 
                                                                selected = "All"
                                                    )
@@ -42,15 +42,15 @@ shinyUI(
                                  column(6,
                                         fluidRow(
                                           column(6,
-                                                 textInput("CPVFrom",label = h5(strong("CPV code from")), 
-                                                           value = "")),
-                                          column(2,
-                                                 textInput("CPVTo",label = h5(strong("to")), 
-                                                           value = ""))
+                                                 selectInput("CPVFrom",label = h5(strong("CPV code from")), 
+                                                             selected = "",choices=CPVcodes)),
+                                          column(6,
+                                                 selectInput("CPVTo",label = h5(strong("to")), 
+                                                             selected = "",choices=CPVcodes))
                                         ),
                                         fluidRow(
                                           column(6,
-                                                 textInput("valueFrom",label = h5(strong("Contract value from")), 
+                                                 textInput("valueFrom",label = h5(strong("Contract value (€) from")), 
                                                            value = "")),
                                           column(2,
                                                  textInput("valueTo",label = h5(strong("to")), 
@@ -59,8 +59,9 @@ shinyUI(
                                         ),
                                         fluidRow(
                                           column(6,
-                                                 textInput("nbOffersFrom",label = h5(strong("Number of offers from")), 
-                                                           value = "")),
+                                                 tags$div(title="Minimum 1. EU average is 4 bids per tender.",
+                                                          textInput("nbOffersFrom",label = h5(strong("Number of offers from")), 
+                                                                    value = ""))),
                                           column(2,
                                                  textInput("nbOffersTo",label = h5(strong("to")), 
                                                            value = ""))
