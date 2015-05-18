@@ -7,3 +7,5 @@ operator_countries<-c("All",read.table("data/operator_countries.txt",stringsAsFa
 dataNamesFields<-read.table("data/nameFields.txt",stringsAsFactors=F)
 nameFields<-dataNamesFields[,1]
 names(nameFields)<-dataNamesFields[,2]
+
+CPVcodes<-c("",read.table("data/CPVcodes.txt",stringsAsFactors=F,col.names=F)[,1])
