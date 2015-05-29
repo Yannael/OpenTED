@@ -1,3 +1,4 @@
+library("RMySQL")
 #Be careful to run this you need at least 8GB of free RAM. If you don't, run by chunks (i.e. load a CSV, add to the DB, and so on) 
 
 #Load all CSV
@@ -16,7 +17,7 @@ dbDisconnect(con)
 
 #Get subset of fields of interest from DB
 con <- dbConnect(RSQLite::SQLite(), "TED.db")
-rs<-dbSendQuery(con,"select document_oj_date,contract_doc_no,contract_location_nuts, contract_authority_country, contract_authority_official_name, contract_appeal_body_slug, contract_operator_country, contract_operator_official_name,contract_operator_slug, contract_contract_value_cost_eur,contract_offers_received_num,document_award_criteria,contract_cpv_code from contracts")
+rs<-dbSendQuery(con,"select document_oj_date,contract_doc_no,contract_location_nuts, contract_authority_country, contract_authority_official_name, contract_authority_slug, contract_operator_country, contract_operator_official_name,contract_operator_slug, contract_contract_value_cost_eur,contract_offers_received_num,document_award_criteria,contract_cpv_code from contracts")
 data = fetch(rs, n=-1)
 dbClearResult(rs)
 dbDisconnect(con)
@@ -56,7 +57,7 @@ dir.create('data')
 
 #Create a subset DB for fields of interests
 con <- dbConnect(RSQLite::SQLite(), "data/TED_award_notices.db")
-dbWriteTable(con,"contracts",data)
+dbWriteTable(con,"contracts",data,overwrite=T)
 dbDisconnect(con)
 
 #Note: Original DB is about 3GB. The resulting TED_curated_contracts.db file is about 250MB.
@@ -72,7 +73,7 @@ write.table(file="data/operator_countries.txt",operator_countries,row.names=F,co
 
 #Save names of fields and their 'nice' meaning
 nameFields<-colnames(data)
-nameFields<-cbind(nameFields,c("Official journal date","Award notice ID","Contract location NUTS", "Government authority country","Contract authority name","Contract appeal body SLUG","Contractor country","Contractor name","Contractor SLUG","Contract value (€)","Number offers received","Award criteria","CPV code"))
+nameFields<-cbind(nameFields,c("Official journal date","Award notice ID","Contract location NUTS", "Government authority country","Government authority name","Government authority SLUG","Contractor country","Contractor name","Contractor SLUG","Contract value (€)","Number offers received","Award criteria","CPV code"))
 write.table(file="data/nameFields.txt",nameFields,row.names=F,col.names=F)
 
 #Save CPV codes
