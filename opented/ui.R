@@ -1,13 +1,15 @@
 library(shiny)
 library(markdown)
 library(DT)
+library(networkD3)
+
 
 shinyUI(
   fluidPage(    
     includeCSS('www/style.css'),
     tags$head(includeScript("analytics.js")),
     fluidRow(
-      img(src="TEDbanner.png", height = 122, width = 1000)
+      div(img(src="TEDbanner.png", height = 122, width = 1000), align="center")
     ),
     br(),
     hr(),
@@ -16,74 +18,31 @@ shinyUI(
              tabsetPanel(
                tabPanel(h5(strong("TED Award Notices 2012/2015")), 
                         column(12,
-                               checkboxInput("filters", label = "Show filtering options", value = F),
-                               conditionalPanel(
-                                 condition = "input.filters== 1",
-                                 fluidRow(column(6,
-                                                 fluidRow(
-                                                   dateRangeInput('dateRange',
-                                                                  label = h5(strong('Select period to cover (yyyy-mm-dd)')),
-                                                                  start = "2015-01-01", end = "2015-02-28"
-                                                   )
-                                                 ),
-                                                 fluidRow(
-                                                   selectInput("selectAuthorityCountry", label = h5(strong("Government authority country")), 
-                                                               choices = authority_countries, 
-                                                               selected = "All"
-                                                   )
-                                                 ),
-                                                 fluidRow(
-                                                   selectInput("selectOperatorCountry", label = h5(strong("Contractor country")), 
-                                                               choices = operator_countries, 
-                                                               selected = "All"
-                                                   )
-                                                 )
-                                 ),
-                                 column(6,
-                                        fluidRow(
-                                          column(6,
-                                                 selectInput("CPVFrom",label = h5(strong("CPV code from")), 
-                                                             selected = "",choices=CPVcodes)),
-                                          column(6,
-                                                 selectInput("CPVTo",label = h5(strong("to")), 
-                                                             selected = "",choices=CPVcodes))
-                                        ),
-                                        fluidRow(
-                                          column(6,
-                                                 textInput("valueFrom",label = h5(strong("Contract value (€) from")), 
-                                                           value = "")),
-                                          column(2,
-                                                 textInput("valueTo",label = h5(strong("to")), 
-                                                           value = ""))
-                                          
-                                        ),
-                                        fluidRow(
-                                          column(6,
-                                                 tags$div(title="Minimum 1. EU average is 4 bids per tender.",
-                                                          textInput("nbOffersFrom",label = h5(strong("Number of offers from")), 
-                                                                    value = ""))),
-                                          column(2,
-                                                 textInput("nbOffersTo",label = h5(strong("to")), 
-                                                           value = ""))
-                                          
-                                        )
-                                 )
-                                 ),
-                                 fluidRow(
-                                   actionButton("applySelection","Apply selection",class="btn btn-primary"),
-                                   align="center"
-                                 ),
-                                 br(),
-                                 fluidRow(
-                                   textOutput("nbRowsErrorMessage"),
-                                   align="center"
+                               fluidRow(
+                                 dateRangeInput('dateRange',
+                                                label = h5(strong('Select period to cover (yyyy-mm-dd)')),
+                                                start = "2015-02-01", end = "2015-02-28"
                                  )
                                ),
-                               DT::dataTableOutput('awardTable'),
-                               tags$div(class="extraspace5"),
-                               downloadButton('downloadAwards', label = "Download CSV", class = NULL)
-                               #downloadButton('downloadAwardsGephi', label = "Download GEXF (Gephi)", class = NULL)
+                               fluidRow(
+                                 div(actionButton("applySelection","Apply",class="btn btn-primary"),
+                                     align="left"),
+                                 hr(),
+                                 div(downloadButton('downloadAwards', label = "Download CSV",class = NULL),
+                                     align="right")
+                               ),
+                               fluidRow(
+                                 DT::dataTableOutput('awardTable'),
+                                 tags$div(class="extraspace5")
+                                 
+                                 #downloadButton('downloadAwardsGephi', label = "Download GEXF (Gephi)", class = NULL)
+                               )
                         )
+               ),
+               tabPanel(h5(strong("Visualize")),
+                        tags$div(class="extraspace5"),
+                        sankeyNetworkOutput('sankey'),
+                        "blbl"
                ),
                tabPanel(h5(strong("About")),
                         tags$div(class="extraspace5"),
