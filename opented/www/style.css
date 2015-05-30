@@ -23,8 +23,8 @@ font-size: 16px;
 }
 
 .container-fluid {
-	min-width: 1000px;
-	max-width: 1000px;
+	min-width: 1300px;
+	max-width: 1300px;
 	float:none;
 	margin:0 auto;
 }
@@ -57,6 +57,6 @@ background-color: #4AA1FF;
 .opacity = 0.8;
 }
 .shiny-progress .progress {
-height:20px;
+height:60px;
 }
 
