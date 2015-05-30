@@ -73,7 +73,7 @@ write.table(file="data/operator_countries.txt",operator_countries,row.names=F,co
 
 #Save names of fields and their 'nice' meaning
 nameFields<-colnames(data)
-nameFields<-cbind(nameFields,c("Official journal date","Award notice ID","Contract location NUTS", "Government authority country","Government authority name","Government authority SLUG","Contractor country","Contractor name","Contractor SLUG","Contract value (€)","Number offers received","Award criteria","CPV code"))
+nameFields<-cbind(nameFields,c("Official journal date","Award notice ID","Contract location NUTS", "Contracting authority country","Contracting authority name","Contracting authority SLUG","Contractor country","Contractor name","Contractor SLUG","Contract value (€)","Number offers received","Award criteria","CPV code"))
 write.table(file="data/nameFields.txt",nameFields,row.names=F,col.names=F)
 
 #Save CPV codes
