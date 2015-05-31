@@ -80,6 +80,13 @@ write.table(file="data/nameFields.txt",nameFields,row.names=F,col.names=F)
 CPVcodes<-sort(unique(data[,'contract_cpv_code']))
 write.table(file="data/CPVcodes.txt",CPVcodes,row.names=F,col.names=F)
 
+#Grab CPV coes from OpenTed Github
+rawfile<-getURL("https://raw.githubusercontent.com/opented/opented/master/cpvcodes/cpvcodes.csv")
+CPVTable <- read.csv(textConnection(rawfile))
+CPVTable<-CPVTable[,c(2,5)]
+CPVTable[,2]<-iconv(CPVTable[,2], from="latin1" ,to="UTF-8")
+write.table(file="data/CPVTable.txt",CPVTable,row.names=F,col.names=F)
+
 #Returns a bar plot with the number of award notices per contract authority country
 output$authorityCountryBarPlot<-renderPlot({
   data<-sessionData$data
