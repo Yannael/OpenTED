@@ -18,7 +18,7 @@
 * There are three types of filters, depending on the column:
  * Country columns (authority and contractor) allow you to select the set of countries you want to include. These filters are fast.
  * Number columns (contract value, number offers received, CPV code) allow you to select a range of values using sliders. You may also enter the range in the box by typing 'x ... y' (without '') where x and y are the imits of your interval. For example '10 ... 10000' in the contract value filtering box will select notices whose contract value is between 10 and 10000. Note that you may leave either 'x' or 'y' blank, so the interval is open. Thus '10 ...' will select notices whose contract value is higher than 10. These filters are also fast.
- * The other columns are 'character columns', meaning that their contents are treated as strings of characters. Notices will be selected if part of their content contains the text you typed in the filtering box. These filters are slow. 
+ * The other columns (date, award notice ID, contracting authority name, contractor name) are 'character columns', meaning that their content are treated as strings of characters. Notices will be selected if part of their content contains the text you typed in the filtering box. These filters are slow. 
 * The meaning of CPV codes is available in the 'CPV codes' tab.
 * You can download your selection using the 'Download CVS/GEXF' button. This will download a ZIP file which contains two files:
  *  'selection.csv' is an export of the table in the CSV format,
