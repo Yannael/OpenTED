@@ -12,7 +12,7 @@
 * Once loaded, the interface returns award notices for all countries, for the period 2015-01-01 / 2015-02-28 (around 42000 notices).
 * You may extend the period with the 'select period' widget (no notices before 2012-01-31 and after 2015-02-27)
 * **Note** that the whole period 2012-01-31 / 2015-02-27 contains more than 1,5 million notices. While the interface is reasonably responsive for 100000 notices, it will obviously take some time (about 20 seconds) to load more than one million notices. 
-* **Patience :)** If your selection is big, wait. Clicking again on 'Apply', or on table options, will end up taking twice the time, or bring error messages. You should however not wait more than 30 seconds...
+* **Patience with large queries :)** If your selection is big, wait. Clicking again on 'Apply', or on table options, will end up taking twice the time, or bring error messages. You should however not wait more than 30 seconds...
 * Once you loaded all the notices for the period you are interested in, you can use the filters (boxes above columns), and sorting (arrows above columns) tools.
 * Filtering is fast, but sorting can be slow if many notices are selected (especially on character columns, see below).
 * There are three types of filters, depending on the column:
