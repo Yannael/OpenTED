@@ -177,8 +177,7 @@ shinyServer(function(input, output,session) {
     
   })
   
-  createGephiFiles<-function() {
-
+  createArchive<-function() {
     write.csv(sessionData$currentData[,-1], file="selection.csv", row.names=F)
     
     data<-sessionData$data[sessionData$currentData[,1],]
@@ -243,10 +242,10 @@ shinyServer(function(input, output,session) {
   
   output$downloadSelection <- downloadHandler(
     filename = function() {
-      paste('data-gephi-', Sys.Date(), '.zip', sep='')
+      paste('data-opented-', Sys.Date(), '.zip', sep='')
     },
     content = function(con) {
-      createGephiFiles()
+      createArchive()
       zip(con,c('nodes.csv','edges.csv','networkGephi.gexf','selection.csv'))
     }
   )
