@@ -14,7 +14,7 @@
 * **Note** that the whole period 2012-01-31 / 2015-02-27 contains more than 1,5 million notices. While the interface is reasonably responsive for 100000 notices, it will obviously take some time (about 20 seconds) to load more than one million notices. 
 * **Patience with large queries :)** If your selection is big, wait. Clicking again on 'Apply', or on table options, will end up taking twice the time, or bring error messages. You should however not wait more than 30 seconds...
 * Once you loaded all the notices for the period you are interested in, you can use the filters (boxes above columns), and sorting (arrows above columns) tools.
-* Filtering is fast, but sorting can be slow if many notices are selected (especially on character columns, see below).
+* Filtering is fast (except for character columns, see below), and sorting can be slow if many notices are selected.
 * There are three types of filters, depending on the column:
  * Country columns (authority and contractor) allow you to select the set of countries you want to include. These filters are fast.
  * Number columns (contract value, number offers received, CPV code) allow you to select a range of values using sliders. You may also enter the range in the box by typing 'x ... y' (without '') where x and y are the imits of your interval. For example '10 ... 10000' in the contract value filtering box will select notices whose contract value is between 10 and 10000. Note that you may leave either 'x' or 'y' blank, so the interval is open. Thus '10 ...' will select notices whose contract value is higher than 10. These filters are also fast.
