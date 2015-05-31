@@ -43,13 +43,6 @@ ul.ColVis_collection {
   margin-left:-110px;
 }
 
-#CPVFrom {width: 200px}
-#CPVTo {width: 200px}
-#valueFrom {width: 200px}
-#valueTo {width: 200px}
-#nbOffersFrom {width: 200px}
-#nbOffersTo {width: 200px}
-
 #download {float:right;}
 
 .shiny-progress .bar {
@@ -57,6 +50,6 @@ background-color: #4AA1FF;
 .opacity = 0.8;
 }
 .shiny-progress .progress {
-height:60px;
+height:20px;
 }
 
