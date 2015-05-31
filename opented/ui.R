@@ -9,7 +9,7 @@ shinyUI(
     includeCSS('www/style.css'),
     tags$head(includeScript("analytics.js")),
     fluidRow(
-      div(img(src="TEDbanner.png", height = 122, width = 1000), align="center")
+      div(img(src="TEDbanner.png", height = 152, width = 1300), align="center")
     ),
     br(),
     hr(),
@@ -28,21 +28,28 @@ shinyUI(
                                  div(actionButton("applySelection","Apply",class="btn btn-primary"),
                                      align="left"),
                                  hr(),
-                                 div(downloadButton('downloadAwards', label = "Download CSV",class = NULL),
+                                 div(downloadButton('downloadSelection', label = "Download selection (CSV, GEXF)",class = NULL),
                                      align="right")
                                ),
                                fluidRow(
                                  DT::dataTableOutput('awardTable'),
                                  tags$div(class="extraspace5")
-                                 
-                                 #downloadButton('downloadAwardsGephi', label = "Download GEXF (Gephi)", class = NULL)
                                )
                         )
                ),
-               tabPanel(h5(strong("Visualize")),
-                        tags$div(class="extraspace5"),
-                        sankeyNetworkOutput('sankey'),
-                        "blbl"
+#                tabPanel(h5(strong("Visualize")),
+#                         tags$div(class="extraspace5"),
+#                         sankeyNetworkOutput('sankey')
+#                ),
+               tabPanel(h5(strong("CPV codes")),
+                        column(6,offset=1,
+                               fluidRow(
+                                 tags$div(class="extraspace5"),
+                                 h4(strong("Meanings of Common Procurement Vocabulary (CPV) codes")),
+                                 div(DT::dataTableOutput('CPVTable'),align="center")
+                                 )
+                               )
+                        
                ),
                tabPanel(h5(strong("About")),
                         tags$div(class="extraspace5"),
