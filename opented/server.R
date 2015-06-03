@@ -76,6 +76,7 @@ shinyServer(function(input, output,session) {
     data<-sessionData$data[,c(1,2,4,5,7,8,10,11,13)]
     data[,3]<-as.factor(data[,3])
     data[,5]<-as.factor(data[,5])
+    data[,9]<-as.factor(data[,9])
     if (!is.null(dim(data))) {
       action = mydataTableAjax(session, data,sessionData=sessionData)
       widget = datatable(data, 
@@ -99,6 +100,8 @@ shinyServer(function(input, output,session) {
                            columnDefs = list(
                              list(visible=F,targets=c(0)),
                              list(width=c(150),targets=c(4,6)),
+                             list(width=c(100),targets=c(3,5)),
+                             list(width=c(150),targets=c(9)),
                              list(className="dt-right",targets="_all")
                            )
                          )
