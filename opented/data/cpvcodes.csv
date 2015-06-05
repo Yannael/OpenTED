@@ -1684,7 +1684,7 @@ ORIGINAL_CODE,PLAIN_CODE,NUM_DIGITS,REAL_CODE,NAME
 24963000-2,24963000,5,24963,Anti-corrosion products
 24964000-9,24964000,5,24964,Glycerol
 24965000-6,24965000,5,24965,Enzymes
-30000000-9,30000000,0,,"Office and computing machinery, equipment and supplies except furniture and software packages"
+30000000-9,30000000,2,30,"Office and computing machinery, equipment and supplies except furniture and software packages"
 30100000-0,30100000,3,301,"Office machinery, equipment and supplies except computers, printers and furniture"
 30110000-3,30110000,4,3011,Word-processing machines
 30111000-0,30111000,5,30111,Word processors
@@ -7364,7 +7364,7 @@ ORIGINAL_CODE,PLAIN_CODE,NUM_DIGITS,REAL_CODE,NAME
 48987000-0,48987000,5,48987,Debugging software package
 48990000-4,48990000,4,4899,Spreadsheets and enhancement software package
 48991000-1,48991000,5,48991,Spreadsheet software package
-50000000-5,50000000,0,,Repair and maintenance services
+50000000-5,50000000,2,50,Repair and maintenance services
 50100000-6,50100000,3,501,"Repair, maintenance and associated services of vehicles and related equipment"
 50110000-9,50110000,4,5011,Repair and maintenance services of motor vehicles and associated equipment
 50111000-6,50111000,5,50111,"Fleet management, repair and maintenance services"
@@ -7737,7 +7737,7 @@ ORIGINAL_CODE,PLAIN_CODE,NUM_DIGITS,REAL_CODE,NAME
 55523100-3,55523100,6,555231,School-meal services
 55524000-9,55524000,5,55524,School catering services
 55900000-9,55900000,3,559,Retail trade services
-60000000-8,60000000,0,,Transport services (excl. Waste transport)
+60000000-8,60000000,2,60,Transport services (excl. Waste transport)
 60100000-9,60100000,3,601,Road transport services
 60112000-6,60112000,5,60112,Public road transport services
 60120000-5,60120000,4,6012,Taxi services
@@ -8038,7 +8038,7 @@ ORIGINAL_CODE,PLAIN_CODE,NUM_DIGITS,REAL_CODE,NAME
 66700000-7,66700000,3,667,Reinsurance services
 66710000-0,66710000,4,6671,Life reinsurance services
 66720000-3,66720000,4,6672,Accident and health reinsurance services
-70000000-1,70000000,0,,Real estate services
+70000000-1,70000000,2,70,Real estate services
 70100000-2,70100000,3,701,Real estate services with own property
 70110000-5,70110000,4,7011,Development services of real estate
 70111000-2,70111000,5,70111,Development of residential real estate
@@ -8913,7 +8913,7 @@ ORIGINAL_CODE,PLAIN_CODE,NUM_DIGITS,REAL_CODE,NAME
 79999000-3,79999000,5,79999,Scanning and invoicing services
 79999100-4,79999100,6,799991,Scanning services
 79999200-5,79999200,6,799992,Invoicing services
-80000000-4,80000000,0,,Education and training services
+80000000-4,80000000,2,80,Education and training services
 80100000-5,80100000,3,801,Primary education services
 80110000-8,80110000,4,8011,Pre-school education services
 80200000-6,80200000,3,802,Secondary education services
@@ -9066,7 +9066,7 @@ ORIGINAL_CODE,PLAIN_CODE,NUM_DIGITS,REAL_CODE,NAME
 85321000-5,85321000,5,85321,Administrative social services
 85322000-2,85322000,5,85322,Community action programme
 85323000-9,85323000,5,85323,Community health services
-90000000-7,90000000,0,,"Sewage, refuse, cleaning and environmental services"
+90000000-7,90000000,2,90,"Sewage, refuse, cleaning and environmental services"
 90400000-1,90400000,3,904,Sewage services
 90410000-4,90410000,4,9041,Sewage removal services
 90420000-7,90420000,4,9042,Sewage treatment services
