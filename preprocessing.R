@@ -25,8 +25,45 @@ dbDisconnect(con)
 ##################
 #Some basic data curating
 
+#If CPV NA, put 00000000 instead
+na.cpv<-which(is.na(data[,'contract_cpv_code']))
+data[na.cpv,'contract_cpv_code']<-'00000000'
+
+#Check for CPVs with length 7, for which a 0 is missing
+add0<-which(sapply(data[,'contract_cpv_code'],nchar)==7)
+data[add0,'contract_cpv_code']<-paste0("0",data[add0,'contract_cpv_code'])
+
+#Get category of contract value
+getCatValue<-function(val) {
+  if (is.na(val)) return("NA")
+  if (val>=0 & val<1000) return("1-1K")
+  if (val>=1000 & val<10000) return("1K-10K")
+  if (val>=10000 & val<100000) return("10K-100K")
+  if (val>=100000 & val<1000000) return("100K-1M")
+  if (val>=1000000 & val<10000000) return("1M-10M")
+  if (val>=10000000) return(">10M")
+}
+
+catValue<-factor(unlist(sapply(data[,'contract_contract_value_cost_eur'],getCatValue)),levels=c("NA","1-1K","1K-10K","10K-100K","100K-1M","1M-10M",">10M"))
+
+data<-cbind(data,catValue)
+
+#Get category of nb offers value
+getCatOffers<-function(val) {
+  if (is.na(val)) return("NA")
+  if (val>=0 & val<7) return(as.character(val))
+  if (val>6) return(">6")
+}
+
+catOffers<-factor(unlist(sapply(data[,'contract_offers_received_num'],getCatOffers)),levels=c("NA","1","2","3","4","5","6",">6"))
+
+data<-cbind(data,catOffers)
+
 #Round contract values (in euros), too many decimals in there
 data[,'contract_contract_value_cost_eur']<-round(data[,'contract_contract_value_cost_eur'])
+
+#Create category for contract value
+
 
 #Make dates look nice
 #Take a string YYYMMDD and makes it YYY-MM-DD
@@ -60,20 +97,9 @@ con <- dbConnect(RSQLite::SQLite(), "data/TED_award_notices.db")
 dbWriteTable(con,"contracts",data,overwrite=T)
 dbDisconnect(con)
 
-#Note: Original DB is about 3GB. The resulting TED_curated_contracts.db file is about 250MB.
-
-
-#Save countries present in DB 
-#Note there are errors in the dataset, some country ID are clearly not right, e.g., "1A"
-authority_countries<-sort(unique(data[,'contract_authority_country']))
-write.table(file="data/authority_countries.txt",authority_countries,row.names=F,col.names=F)
-
-operator_countries<-sort(unique(data[,'contract_operator_country']))
-write.table(file="data/operator_countries.txt",operator_countries,row.names=F,col.names=F)
-
 #Save names of fields and their 'nice' meaning
 nameFields<-colnames(data)
-nameFields<-cbind(nameFields,c("Official journal date","Award notice ID","Contract location NUTS", "Contracting authority country","Contracting authority name","Contracting authority SLUG","Contractor country","Contractor name","Contractor SLUG","Contract value (€)","Number offers received","Award criteria","CPV code"))
+nameFields<-cbind(nameFields,c("Official journal date","Award notice ID","Contract location NUTS", "Contracting authority country","Contracting authority name","Contracting authority SLUG","Contractor country","Contractor name","Contractor SLUG","Contract value (€) - Exact","Number offers received - Exact","Award criteria","CPV code","Contract value (€)","Number offers received"))
 write.table(file="data/nameFields.txt",nameFields,row.names=F,col.names=F)
 
 #Save CPV codes
@@ -81,10 +107,11 @@ CPVcodes<-sort(unique(data[,'contract_cpv_code']))
 write.table(file="data/CPVcodes.txt",CPVcodes,row.names=F,col.names=F)
 
 #Grab CPV coes from OpenTed Github
-rawfile<-getURL("https://raw.githubusercontent.com/opented/opented/master/cpvcodes/cpvcodes.csv")
-CPVTable <- read.csv(textConnection(rawfile))
-CPVTable<-CPVTable[,c(2,5)]
-CPVTable[,2]<-iconv(CPVTable[,2], from="latin1" ,to="UTF-8")
+#rawfile<-getURL("https://raw.githubusercontent.com/opented/opented/master/cpvcodes/cpvcodes.csv")
+#CPVTable <- read.csv(textConnection(rawfile),colClasses=c("character"))
+CPVTable <- read.csv(file="opented/data/cpvcodes.csv",colClasses=c("character"))
+CPVTable<-CPVTable[,c(1,2,3,4,5)]
+CPVTable[,5]<-iconv(CPVTable[,5], from="latin1" ,to="UTF-8")
 write.table(file="data/CPVTable.txt",CPVTable,row.names=F,col.names=F)
 
 #Returns a bar plot with the number of award notices per contract authority country
