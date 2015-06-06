@@ -28,7 +28,7 @@ shinyUI(
                                  div(actionButton("applySelection","Apply",class="btn btn-primary"),
                                      align="left"),
                                  hr(),
-                                 div(downloadButton('downloadSelection', label = "Download selection (CSV, GEXF)",class = NULL),
+                                 div(downloadButton('downloadSelection', label = "Download selection (CSV)",class = NULL),
                                      align="right")
                                ),
                                fluidRow(
@@ -37,12 +37,14 @@ shinyUI(
                                )
                         )
                ),
-#                tabPanel(h5(strong("Visualize")),
-#                         tags$div(class="extraspace5"),
-#                         sankeyNetworkOutput('sankey')
-#                ),
+                tabPanel(h5(strong("Contract flows")),
+                         column(10,offset=1,
+                         tags$div(class="extraspace5"),
+                         uiOutput("sankeyUI")
+                         )
+                ),
                tabPanel(h5(strong("CPV codes")),
-                        column(6,offset=1,
+                        column(10,offset=1,
                                fluidRow(
                                  tags$div(class="extraspace5"),
                                  h4(strong("Meanings of Common Procurement Vocabulary (CPV) codes")),
