@@ -7,23 +7,8 @@
 
 * (Temporary location. Will soon be relocated): [http://litpc45.ulb.ac.be/opented](http://litpc45.ulb.ac.be/opented)
 
-#### Usage
-
-* Once loaded, the interface returns award notices for all countries, for the period 2015-01-01 / 2015-02-28 (around 42000 notices).
-* You may extend the period with the 'select period' widget (no notices before 2012-01-31 and after 2015-02-27)
-* **Note** that the whole period 2012-01-31 / 2015-02-27 contains more than 1,5 million notices. While the interface is reasonably responsive for 100000 notices, it will obviously take some time (about 20 seconds) to load more than one million notices. 
-* **Patience with large queries :)** If your selection is big, wait. Clicking again on 'Apply', or on table options, will end up taking twice the time, or bring error messages. You should however not wait more than 30 seconds...
-* Once you loaded all the notices for the period you are interested in, you can use the filters (boxes above columns), and sorting (arrows above columns) tools.
-* Filtering is fast (except for character columns, see below), and sorting can be slow if many notices are selected.
-* There are three types of filters, depending on the column:
- * Country columns (authority and contractor) allow you to select the set of countries you want to include. These filters are fast.
- * Number columns (contract value, number offers received, CPV code) allow you to select a range of values using sliders. You may also enter the range in the box by typing 'x ... y' (without '') where x and y are the imits of your interval. For example '10 ... 10000' in the contract value filtering box will select notices whose contract value is between 10 and 10000. Note that you may leave either 'x' or 'y' blank, so the interval is open. Thus '10 ...' will select notices whose contract value is higher than 10. These filters are also fast.
- * The other columns (date, award notice ID, contracting authority name, contractor name) are 'character columns', meaning that their content are treated as strings of characters. Notices will be selected if part of their content contains the text you typed in the filtering box. These filters are slow. 
-* The meaning of CPV codes is available in the 'CPV codes' tab.
-* You can download your selection using the 'Download CVS/GEXF' button. This will download a ZIP file which contains two files:
- *  'selection.csv' is an export of the table in the CSV format,
- * 'networkGephi.gexf' is a file you can load in Gephi, to visualize the relationships between authorities and contrators in a network.
-* Downloading your selection may take a long time. Expect instantaneous download for 100 notices, 30 seconds for 50000 notices, and minutes for more than 100000 notices. 
+#### Notes
+* The interface may be a bit slow, since there are up to 1.5 million award notices. With all notices, delays up to 10 seconds may happen (with a good Internet connection...). Restrict the date range for faster results.
 * There are missing data in the award notices, and even erroneous data. This is independent of OpenTED data. To the best of our knowledge, data are the same as those available from the official TED EU site. Let us know if you spot any inconsistencies.
 
 #### Code
