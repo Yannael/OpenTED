@@ -140,28 +140,26 @@ shinyServer(function(input, output,session) {
   output$sankey<-renderSankeyNetwork({
     data<-sessionData$data[sessionData$currentData[,1],]
     sessionData$nbContracts<-nrow(data)
-    if (input$flowValues=="value") valueToSelect<-'Contract value (€) - Exact'
-    else valueToSelect<-'Number offers received - Exact'
+    valueToSelect<-'Contract value (€) - Exact'
     if (nrow(data)>1000) 
       sessionData$nbRowsErrorMessage<-paste0("Number of selected contracts is ",nrow(data), ", the maximum is 1000. Please refine selection.")
     else {
       data<-data[which(data[,valueToSelect]>0),]
       sessionData$nbContractsMore0<-nrow(data)
       
-      pairscontracts<-paste(data$'Contracting authority SLUG',data$'Contractor SLUG',sep="_")
-      nbcontractperpairs<-tapply(pairscontracts,pairscontracts,length)
-      nbcontractperpairs<-sort(nbcontractperpairs,dec=T)
+      i.NA<-which(data[,"Contracting authority SLUG"]=="")
+      if (length(i.NA)>0) data[i.NA,"Contracting authority SLUG"]<-"NA"
+      i.NA<-which(data[,"Contractor SLUG"]=="")
+      if (length(i.NA)>0) data[i.NA,"Contractor SLUG"]<-"NA"
       
-      #N<-1000
-      #pairs.select<-which(pairscontracts %in% names(nbcontractperpairs[1:N]))
-      pairs.select<-1:nrow(data)
-      
-      data<-droplevels(data[pairs.select,])
+      data<-droplevels(data)
       pairscontracts<-paste(data$'Contracting authority SLUG',data$'Contractor SLUG',sep="_")
       
       sumpairs<-tapply(data[,valueToSelect],pairscontracts,sum)
       
       nNodes <- sort(unique(c(as.character(data[,'Contracting authority SLUG']),as.character(data[,'Contractor SLUG']))))
+      
+      nNodes <- unique(unlist(strsplit(names(sumpairs[sort(sumpairs,ind=T,dec=T)$ix]),"_")))
       
       nodes <- data.frame(id = 1:length(nNodes),
                           names = nNodes)
@@ -179,7 +177,9 @@ shinyServer(function(input, output,session) {
       i.match<-match(nodes[,2],data[,'Contractor SLUG'])
       nodes[which(!is.na(i.match)),2]<-data[i.match[!is.na(i.match)],'Contractor name']
       
-     #nodes[,1]<-nodes[,1]-1
+      for (i in 1:nrow(nodes)) {
+        if (nchar(nodes[i,2])>65) nodes[i,2]<-paste0(substr(nodes[i,2],1,65),"...")
+      }
       
       sessionData$heightSankey<-nrow(relations)*25
       sessionData$nbAuthority<-length(unique(as.character(data[,'Contracting authority SLUG'])))
@@ -195,12 +195,6 @@ shinyServer(function(input, output,session) {
   
   output$sankeyUI<-renderUI({
     fluidRow(
-      fluidRow(
-        radioButtons("flowValues", "Flow values:",
-                     c("Contract values" = "value",
-                       "Number of offers" = "nbOffers")
-        )
-      ),
       fluidRow(
         strong("Summary"),p(),
         column(3,
@@ -233,65 +227,6 @@ shinyServer(function(input, output,session) {
   
   createArchive<-function() {
     write.csv(sessionData$currentData[,-1], file="selection.csv", row.names=F)
-    
-    #     data<-sessionData$data[sessionData$currentData[,1],]
-    #     
-    #     i.remove<-which(is.na(data[,11]))
-    #     if (length(i.remove)>0) data<-data[-i.remove,]
-    #     
-    #     acquired<-tapply(as.numeric(data[,11]),data[,9],length)
-    #     awarded<-tapply(as.numeric(data[,11]),data[,6],length)
-    #     avgcompauth<-tapply(as.numeric(data[,11]),data[,6],mean)
-    #     avgcompcont<-tapply(as.numeric(data[,11]),data[,9],mean)
-    #     
-    #     avgcompauthcat<-floor(avgcompauth)
-    #     avgcompauthcat[which(avgcompauthcat>6)]<-"6+"
-    #     auth<-cbind(sort(unique(data[,6])),0,awarded,avgcompauth,avgcompauthcat,'true','false')
-    #     
-    #     avgcompcontcat<-floor(avgcompcont)
-    #     avgcompcontcat[which(avgcompcontcat>6)]<-"6+"
-    #     cont<-cbind(sort(unique(data[,9])),acquired,0,avgcompcont,avgcompcontcat,'false','true')
-    #     
-    #     nodes<-rbind(auth,cont)
-    #     colnames(nodes)<-c("Id","Contracts acquired","Contracts awarded","Average competition","Average competition (Cat)","Authority","Company")
-    #     
-    #     edges<-unique(data[,c(6,9)])
-    #     colnames(edges)<-c("Source","Target")
-    #     
-    #     write.csv(nodes, 'nodes.csv', row.names=F,quote=F)
-    #     write.csv(edges, 'edges.csv', row.names=F,quote=F)
-    #     
-    #     nodesID<-data.frame(ID=1:nrow(nodes),name=nodes[,1])
-    #     edges[,1]<-match(edges[,1],nodes[,1])
-    #     edges[,2]<-match(edges[,2],nodes[,1])
-    #     
-    #     nodes[nodes[,5]=="6+",5]<-7
-    #     nodescol<-as.numeric(nodes[,5])+1
-    #     
-    #     colors<-matrix(
-    #       c(255,245,235,1,
-    #         254,230,206,1,
-    #         253,208,162,1,
-    #         253,174,107,1,
-    #         253,141,60,1,
-    #         241,105,19,1,
-    #         217,72,1,1,
-    #         140,45,4,1),8,4,byrow=T)
-    #     
-    #     nodecolors<- data.frame(r = colors[nodescol,1],
-    #                             g = colors[nodescol,2],
-    #                             b = colors[nodescol,3],
-    #                             a = colors[nodescol,4])
-    #     
-    #     graph <- write.gexf(nodes=nodesID,
-    #                         edges=edges,
-    #                         defaultedgetype='directed',
-    #                         nodesVizAtt=list(
-    #                           color=nodecolors,
-    #                           size=10*(as.numeric(nodes[,2])+as.numeric(nodes[,3]))+100
-    #                         ),
-    #                         output="networkGephi.gexf")
-    #     
   }
   
   output$downloadSelection <- downloadHandler(
@@ -299,10 +234,7 @@ shinyServer(function(input, output,session) {
       paste('data-opented-', Sys.Date(), '.csv', sep='')
     },
     content = function(con) {
-      #createArchive()
       write.csv(sessionData$currentData[,-1], con,row.names=F)
-      #zip(con,c('nodes.csv','edges.csv','networkGephi.gexf','selection.csv'))
-      
     }
   )
   
