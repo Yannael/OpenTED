@@ -49,12 +49,10 @@ mydataTablesFilter = function(data, params,sessionData) {
               toCPV<-paste0(as.numeric(substr(fromCPV,1,pos.lng[1]-1))+1,paste0(rep("0",8-pos.lng[1]+1),collapse=""))
               if (nchar(toCPV)==7) toCPV<-paste0(0,toCPV)
             }
-            browser()
             #which(dj %in% jsonlite::fromJSON(k))
             djc<-as.character(dj)
             i.tokeep<-c(i.tokeep,which(djc>=fromCPV & djc<toCPV))
           }
-          browser()
           i.tokeep
         }
       }
