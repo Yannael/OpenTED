@@ -141,7 +141,6 @@ shinyServer(function(input, output,session) {
     strsplit(link,"'")[[1]][2]
   }
   
-  
   output$sankey<-renderSankeyNetwork({
     data<-sessionData$data[sessionData$currentData[,1],]
     sessionData$nbContracts<-nrow(data)
@@ -160,6 +159,7 @@ shinyServer(function(input, output,session) {
     if (length(i.NA)>0) data[i.NA,"Contracting authority SLUG"]<-"NA"
     i.NA<-which(data[,"Contractor SLUG"]=="")
     if (length(i.NA)>0) data[i.NA,"Contractor SLUG"]<-"NA"
+    
     
     data<-droplevels(data)
     pairscontracts<-paste(data$'Contracting authority SLUG',data$'Contractor SLUG',sep="_")
