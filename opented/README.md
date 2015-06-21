@@ -5,7 +5,7 @@
 
 #### Online interface 
 
-* (Temporary location. Will soon be relocated): [http://litpc45.ulb.ac.be/opented](http://litpc45.ulb.ac.be/opented)
+* [http://yleborgne.net/opented](http://yleborgne.net/opented)
 
 #### Notes
 * The interface may be a bit slow, since there are up to 1.5 million award notices. With all notices, delays up to 10 seconds may happen (with a good Internet connection...). Restrict the date range for faster results.
