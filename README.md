@@ -4,7 +4,7 @@ See [README in `opented` folder](https://github.com/Yannael/OpenTED/tree/master/
 
 Online at:
 
-[http://litpc45.ulb.ac.be/opented/](http://litpc45.ulb.ac.be/opented/)
+[http://yleborgne.net/opented](http://yleborgne.net/opented)
 
 #### Installation
 
