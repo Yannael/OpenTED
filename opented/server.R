@@ -160,7 +160,6 @@ shinyServer(function(input, output,session) {
     i.NA<-which(data[,"Contractor SLUG"]=="")
     if (length(i.NA)>0) data[i.NA,"Contractor SLUG"]<-"NA"
     
-    
     data<-droplevels(data)
     pairscontracts<-paste(data$'Contracting authority SLUG',data$'Contractor SLUG',sep="_")
     
