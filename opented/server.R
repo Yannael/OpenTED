@@ -1,113 +1,79 @@
 library(shiny)
+library(htmlwidgets)
+library(queryBuildR)
 library(RMySQL)
 library(DT)
 library(RCurl)
 library(networkD3)
-library(rgexf)
-
-source("myDT.R")
 
 shinyServer(function(input, output,session) {
   
   sessionData <- reactiveValues()
   sessionData$nbRowsErrorMessage<-""
   sessionData$heightSankey<-12500
+  sessionData$awards<-loadData("data/TED_award_notices","awards","")
   
   output$nbRowsErrorMessage<-renderText({
     sessionData$nbRowsErrorMessage
   })
   
-  #Modify award notices according to date/countries/CPV/value/offers filters
-  updateAwardsNotice<-function(checkNbRows,dateRange) {
-    if (checkNbRows) 
-      fields<-'count(1)'
-    else fields<-paste(nameFields,collapse=",")
-    
-    con <- dbConnect(RSQLite::SQLite(), "data/TED_award_notices.db")
-    rs<-dbSendQuery(con,paste0("select ", fields," 
-                                   from contracts 
-                                   where 
-                                   document_oj_date>='",dateRange[1],"' ", 
-                               "and document_oj_date<='",dateRange[2],"' ",
-                               " ORDER BY document_oj_date ASC"
-    ))
-    results = fetch(rs, n=-1)
-    dbClearResult(rs)
-    dbDisconnect(con) 
-    results
-  }
-  
-  #Update award notices when apply button pushed
   observe({
-    input$applySelection
-    withProgress(min=1, max=3, expr={
-      setProgress(message = 'Retrieving data, please wait...',
-                  value=1)
-      
-      isolate({
-        result<-updateAwardsNotice(T,input$dateRange)
-      })
-      
-      setProgress(message = 'Retrieving data, please wait...',
-                  value=2)
-      
-      isolate({
-        awardNotices<-updateAwardsNotice(F,input$dateRange)
-      })
-      colnames(awardNotices)<-names(nameFields)
-      sessionData$data<-awardNotices
-      sessionData$currentData<-awardNotices
-      sessionData$nbRowsErrorMessage<-""
-      
-      setProgress(message = 'Retrieving data, please wait...',
-                  value=3)
-      
-      
-    })
+    if (length(input$queryBuilderSQL)>0)
+      #sessionData$awards<-loadData("data/TED_award_notices","awards",input$queryBuilderSQL)
+      a<-1
+  })
+  
+  output$showVarAwardsUI<-renderUI({
+    selectInput('showVarAwards', 'Display variables', colnames(sessionData$awards), 
+                selected=colnames(sessionData$awards),multiple=TRUE, selectize=TRUE)
   })
   
   
+  output$queryBuilderWidget<-renderQueryBuildR({
+    data<-sessionData$data
+    
+    rules=list(condition="OR",
+               rules=list(list(id= 'price',
+                               operator= 'less',
+                               value= 10.25),
+                          list(id= 'price',
+                               operator= 'less',
+                               value= 11.25)))
+    authCountry<-list(
+      id= 'authCountry',
+      label= colnames(data)[3],
+      type= 'string',
+      input= 'select',
+      values=c(
+        unique(data[,3])),
+      operators=list('equal', 'not_equal', 'is_null', 'is_not_null'))
+    
+    filters=list(authCountry,
+                 list(
+                   id= 'price',
+                   label= 'Pricze',
+                   type= 'double',
+                   validation=list(
+                     min= 0,
+                     step= 0.01
+                   ))
+    )
+    widget<-queryBuildR(rules,filters)
+    
+    widget
+  })
+  
   #Returns the dataset in the form of a table
   output$awardTable<-DT::renderDataTable({
-    data<-sessionData$data[,c(1,2,4,5,7,8,14,15,13)]
-    data[,3]<-as.factor(data[,3])
-    data[,5]<-as.factor(data[,5])
-    data[,7]<-factor(data[,7],levels=c("NA","1-1K","1K-10K","10K-100K","100K-1M","1M-10M",">10M"))
-    data[,8]<-factor(data[,8],levels=c("NA","1","2","3","4","5","6",">6"))
-    data[,9]<-as.factor(data[,9])
-    #browser()
-    if (!is.null(dim(data))) {
-      action = mydataTableAjax(session, data,sessionData=sessionData)
-      widget = datatable(data, 
-                         server = TRUE, 
-                         escape=F,
-                         filter = 'top',
-                         options = list(
-                           dom= 'iptlpi',
-                           ajax = list(url = action),
-                           lengthMenu = list(c(10, 100, 1000, 10000), c('10', '100','1000','10000')),pageLength = 10,
-                           autoWidth = F,
-                           #                                              list(
-                           #                                                targets = c(3,5,6,8,9),
-                           #                                                render = JS(
-                           #                                                  "function(data, type, row, meta) {",
-                           #                                                  "return type === 'display' && data.length > 50 ?",
-                           #                                                  "'<span title=\"' + data + '\">' + data.substr(0, 50) + '...</span>' : data;",
-                           #                                                  "}")
-                           #                                              )
-                           #                            )
-                           columnDefs = list(
-                             list(visible=F,targets=c(0)),
-                             list(width=c(150),targets=c(4,6)),
-                             list(width=c(70),targets=c(3,5)),
-                             list(width=c(100),targets=c(7)),
-                             list(width=c(100),targets=c(8)),
-                             list(width=c(120),targets=c(9)),
-                             list(className="dt-right",targets="_all")
-                           )
-                         )
+    if (length(input$showVarAwards) & length(sessionData$awards)) {
+      data<-sessionData$awards[,input$showVarAwards]
+      colnames(data)<-as.vector(sapply(colnames(data),idToName))
+      datatable(data,escape=F, 
+                extensions = 'ColVis', 
+                options = list(
+                  dom = 'C<"clear">tip'
+                  )
       )
-      widget
     }
   })
   

@@ -19,9 +19,11 @@ mydataTablesFilter = function(data, params,sessionData) {
   }
   
   # search by columns
+  
   if (length(i)) for (j in names(q$columns)) {
     col = q$columns[[j]]
     # if the j-th column is not searchable or the search string is "", skip it
+    
     if (col[['searchable']] != 'true') next
     if ((k <- col[['search']][['value']]) == '') next
     j = as.integer(j)
