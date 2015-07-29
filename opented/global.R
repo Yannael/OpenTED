@@ -14,23 +14,19 @@ loadData<-function(db,tablename,sql) {
 }
 
 getWidgetTable<-function(data,session) {
-  data[is.na(data)]<-"bla"
   action <- dataTableAjax(session, data,rownames=F)
-  widget<-datatable(data, 
-                    extensions = 'Scroller',
-                    server = TRUE, 
-                    selection = 'single',
-                    rownames=F,
-                    escape=F,
-                    options = list(
-                      dom= 'itS',
-                      deferRender = TRUE,
-                      scrollY = 335,
-                      ajax = list(url = action),
-                      columnDefs = list(
-                        list(className="dt-right",targets="_all")
-                      )
-                    )
+  datatable(data, 
+            selection = 'none',
+            server=T,
+            rownames=F,
+            escape=F,
+            options = list(
+              dom= 'C<"clear">litp',
+              lengthMenu = list(c(10, 100, 1000, 10000), c('10', '100','1000','10000')),pageLength = 10,
+              ajax = list(url = action),
+              columnDefs = list(
+                list(className="dt-right",targets="_all")
+              )
+            )
   )
-  widget
 }
