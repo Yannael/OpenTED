@@ -41,17 +41,12 @@ shinyUI(
                                  )
                           )
                         ),
-                        fluidRow(
-                          column(3,
-                                 uiOutput("showVarAwardsUI")
-                          ),
-                          column(9,
+                          column(12,
                                  fluidRow(
                                    DT::dataTableOutput('awardTable'),
                                    tags$div(class="extraspace5")
                                  )
                           )
-                        )
                ),
                tabPanel(h5(strong("Contract flows")),
                         column(10,offset=1,
