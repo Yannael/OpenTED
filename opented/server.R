@@ -30,34 +30,9 @@ shinyServer(function(input, output,session) {
   
   
   output$queryBuilderWidget<-renderQueryBuildR({
-    data<-sessionData$data
-    
-    rules=list(condition="OR",
-               rules=list(list(id= 'price',
-                               operator= 'less',
-                               value= 10.25),
-                          list(id= 'price',
-                               operator= 'less',
-                               value= 11.25)))
-    authCountry<-list(
-      id= 'authCountry',
-      label= colnames(data)[3],
-      type= 'string',
-      input= 'select',
-      values=c(
-        unique(data[,3])),
-      operators=list('equal', 'not_equal', 'is_null', 'is_not_null'))
-    
-    filters=list(authCountry,
-                 list(
-                   id= 'price',
-                   label= 'Pricze',
-                   type= 'double',
-                   validation=list(
-                     min= 0,
-                     step= 0.01
-                   ))
-    )
+    data<-sessionData$awards[,c(1:4,6:7,9:12)]
+    rules<-NULL
+    filters<-getFiltersFromTable(data)
     widget<-queryBuildR(rules,filters)
     
     widget
@@ -65,15 +40,10 @@ shinyServer(function(input, output,session) {
   
   #Returns the dataset in the form of a table
   output$awardTable<-DT::renderDataTable({
-    if (length(input$showVarAwards) & length(sessionData$awards)) {
-      data<-sessionData$awards[,input$showVarAwards]
-      colnames(data)<-as.vector(sapply(colnames(data),idToName))
-      datatable(data,escape=F, 
-                extensions = 'ColVis', 
-                options = list(
-                  dom = 'C<"clear">tip'
-                  )
-      )
+    if (length(data)) {
+    data<-sessionData$awards[,c(1:4,6:7,9:12)]
+    colnames(data)<-as.vector(sapply(colnames(data),idToName))
+    getWidgetTable(data,session)
     }
   })
   
