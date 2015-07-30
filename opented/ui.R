@@ -31,22 +31,19 @@ shinyUI(
                                     };
                                     document.getElementById("queryApply").onclick = function() {getSQLStatement()}
                                   ')
-                                 ),
-                                 fluidRow(
-                                   div(actionButton("applySelection","Apply",class="btn btn-primary"),
-                                       align="left"),
-                                   hr(),
-                                   div(downloadButton('downloadSelection', label = "Download selection (CSV)",class = NULL),
-                                       align="right")
                                  )
                           )
                         ),
-                          column(12,
-                                 fluidRow(
-                                   DT::dataTableOutput('awardTable'),
-                                   tags$div(class="extraspace5")
-                                 )
-                          )
+                        column(12,
+                               fluidRow(
+                                 hr(),
+                                 #h5(strong(textOutput("nbRowsErrorMessage"))),
+                                 div(downloadButton('downloadSelection', label = "Download selection (CSV)",class = NULL),
+                                     align="right"),
+                                 DT::dataTableOutput('awardTable'),
+                                 tags$div(class="extraspace5")
+                               )
+                        )
                ),
                tabPanel(h5(strong("Contract flows")),
                         column(10,offset=1,
