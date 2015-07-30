@@ -46,17 +46,18 @@ createName<-function(s) {
 
 #Create proper award notice document ID from the contract_doc_no field in OpenTED CSV
 namesDoc<-as.character(unlist(lapply(sapply(data[,"contract_doc_no"],strsplit,"/S (.*)-"),createName)))
+data[,'contract_doc_no']<-namesDoc
 
 #Create HTML links to webpages on TED website
 linkDoc<-paste0("<a href='http://ted.europa.eu/udl?uri=TED:NOTICE:",namesDoc,":TEXT:EN:HTML&src=0' target='_blank'>",namesDoc,'</a>')
-data[,'contract_doc_no']<-linkDoc
+data<-cbind(data,'linkDoc'=linkDoc)
 
 ##################
 #Store results in folder 'data'
 dir.create('data')
 
 #Define column names
-colnames(data)<-c("official_journal_date","award_notice_id","contracting_authority_country","contracting_authority_name","contracting_authority_slug","contractor_country","contractor_name","contractor_slug","contract_value_euros","number_offers_received","award_criteria","c_p_v_code")
+colnames(data)<-c("official_journal_date","award_notice_id","contracting_authority_country","contracting_authority_name","contracting_authority_slug","contractor_country","contractor_name","contractor_slug","contract_value_euros","number_offers_received","award_criteria","CPV_code","award_notice_id_link")
 
 #Create a subset DB for fields of interests
 con <- dbConnect(RSQLite::SQLite(), "data/TED_award_notices.db")
