@@ -9,42 +9,80 @@ library(networkD3)
 shinyServer(function(input, output,session) {
   
   sessionData <- reactiveValues()
-  sessionData$nbRowsErrorMessage<-""
   sessionData$heightSankey<-12500
-  sessionData$awards<-loadData("data/TED_award_notices","awards","")
+  data<-loadData("data/TED_award_notices","awards","")
+  sessionData$awards<-data$data
+  sessionData$nbRowsErrorMessage<-data$nbRowsErrorMessage
   
   output$nbRowsErrorMessage<-renderText({
     sessionData$nbRowsErrorMessage
   })
   
   observe({
-    if (length(input$queryBuilderSQL)>0)
-      #sessionData$awards<-loadData("data/TED_award_notices","awards",input$queryBuilderSQL)
-      a<-1
+    if (length(input$queryBuilderSQL)>0) {
+      data<-loadData("data/TED_award_notices","awards",input$queryBuilderSQL)
+      sessionData$awards<-data$data
+      sessionData$nbRowsErrorMessage<-data$nbRowsErrorMessage
+    }
   })
-  
-  output$showVarAwardsUI<-renderUI({
-    selectInput('showVarAwards', 'Display variables', colnames(sessionData$awards), 
-                selected=colnames(sessionData$awards),multiple=TRUE, selectize=TRUE)
-  })
-  
   
   output$queryBuilderWidget<-renderQueryBuildR({
-    data<-sessionData$awards[,c(1:4,6:7,9:12)]
-    rules<-NULL
+    isolate({data<-sessionData$awards[,c(1:4,6:7,9:12)]})
+    data[,3]<-factor(data[,3])
+    data[,5]<-factor(data[,5])
+    data[,9]<-factor(data[,9])
+    rules<-list(rules=list(
+      list(
+      id= 'contracting_authority_country',
+      operator= 'equal',
+      value='DE'
+      ),
+      list(
+        id= 'contract_value_euros',
+        operator= 'is_not_empty'
+      ),
+      list(
+        id= 'CPV_code',
+        operator= 'begins_with',
+        value='45'
+      ),
+      list(
+        id= 'official_journal_date',
+        operator= 'greater_or_equal',
+        value='2015-01-15'
+      )    
+    ))
     filters<-getFiltersFromTable(data)
-    widget<-queryBuildR(rules,filters)
     
-    widget
+    data<-loadData("data/TED_award_notices","awards","contracting_authority_country='DE' and contract_value_euros<>'' and CPV_code like '45%' and official_journal_date>'2015-01-15'")
+    sessionData$awards<-data$data
+    sessionData$nbRowsErrorMessage<-data$nbRowsErrorMessage
+    
+    filters[[1]]$operators<-list('equal','not_equal',  'less', 'less_or_equal', 'greater','greater_or_equal','between')
+    queryBuildR(rules,filters)
   })
   
   #Returns the dataset in the form of a table
   output$awardTable<-DT::renderDataTable({
-    if (length(data)) {
-    data<-sessionData$awards[,c(1:4,6:7,9:12)]
+    data<-sessionData$awards[,c(1,13,3:4,6:7,9:12)]
     colnames(data)<-as.vector(sapply(colnames(data),idToName))
-    getWidgetTable(data,session)
-    }
+    action <- dataTableAjax(session, data,rownames=F)
+    datatable(data, 
+              selection = 'none',
+              server=T,
+              rownames=F,
+              escape=F,
+              options = list(
+                dom= 'C<"clear">litp',
+                lengthMenu = list(c(10, 100, 1000), c('10', '100','1000')),pageLength = 10,
+                ajax = list(url = action),
+                columnDefs = list(
+                  list(width=c(120),targets=c(3,5)),
+                  list(width=c(70),targets=c(2,4,6:9)),
+                  list(className="dt-right",targets="_all")
+                )
+              )
+    )
   })
   
   #Returns the dataset in the form of a table
@@ -78,55 +116,51 @@ shinyServer(function(input, output,session) {
   }
   
   output$sankey<-renderSankeyNetwork({
-    data<-sessionData$data[sessionData$currentData[,1],]
+    data<-sessionData$awards
     sessionData$nbContracts<-nrow(data)
-    valueToSelect<-'Contract value (€) - Exact'
-    data<-data[which(data[,valueToSelect]>0),]
+    data<-data[which(data[,'contract_value_euros']>0),]
     sessionData$nbContractsMore0<-nrow(data)
-    sessionData$totalValueContracts<-sum(data[,valueToSelect])
-    sessionData$nbAuthority<-length(unique(as.character(data[,'Contracting authority SLUG'])))
-    sessionData$nbContractors<-length(unique(as.character(data[,'Contractor SLUG'])))
+    sessionData$totalValueContracts<-sum(data[,'contract_value_euros'])
+    sessionData$nbAuthority<-length(unique(as.character(data[,'contracting_authority_slug'])))
+    sessionData$nbContractors<-length(unique(as.character(data[,'contractor_slug'])))
     
     validate(
       need(nrow(data)<1000, paste0("Number of contracts with value>0 is ",nrow(data), ", the maximum is 1000. Please refine selection."))
     )
     
-    i.NA<-which(data[,"Contracting authority SLUG"]=="")
-    if (length(i.NA)>0) data[i.NA,"Contracting authority SLUG"]<-"NA"
-    i.NA<-which(data[,"Contractor SLUG"]=="")
-    if (length(i.NA)>0) data[i.NA,"Contractor SLUG"]<-"NA"
+    i.NA<-which(data[,"contracting_authority_slug"]=="")
+    if (length(i.NA)>0) data[i.NA,"contracting_authority_slug"]<-"NA"
+    i.NA<-which(data[,"contractor_slug"]=="")
+    if (length(i.NA)>0) data[i.NA,"contractor_slug"]<-"NA"
     
     data<-droplevels(data)
-    pairscontracts<-paste(data$'Contracting authority SLUG',data$'Contractor SLUG',sep="_")
+    pairscontracts<-paste(data$'contracting_authority_slug',data$'contractor_slug',sep="_")
     
-    sumpairs<-tapply(data[,valueToSelect],pairscontracts,sum)
-    
-    nNodes <- sort(unique(c(as.character(data[,'Contracting authority SLUG']),as.character(data[,'Contractor SLUG']))))
+    sumpairs<-tapply(data[,'contract_value_euros'],pairscontracts,sum)
     
     nNodes <- unique(unlist(strsplit(names(sumpairs[sort(sumpairs,ind=T,dec=T)$ix]),"_")))
-    
     nodes <- data.frame(id = 1:length(nNodes),
                         names = nNodes)
     
-    relations <- (data[,c('Contracting authority SLUG','Contractor SLUG')])
+    relations <- (data[,c('contracting_authority_slug','contractor_slug')])
     relations[,1]<-match(relations[,1],nodes$names)                                 
     relations[,2]<-match(relations[,2],nodes$names)
     names(relations) <- c("source", "target")
-    links<-sapply(data[,2],extractURL)
-    graphtable<-cbind(relations-1,value=data[,valueToSelect],link=links)
+    links<-sapply(data[,13],extractURL)
+    graphtable<-cbind(relations-1,value=data[,'contract_value_euros'],link=links)
     
     graphtable<-graphtable[order(-graphtable[,3],graphtable[,1],graphtable[,2]),]
     
     nodes[,2]<-as.character(nodes[,2])
-    i.match<-match(nodes[,2],data[,'Contracting authority SLUG'])
-    nodes[which(!is.na(i.match)),2]<-data[i.match[!is.na(i.match)],'Contracting authority name']
-    i.match<-match(nodes[,2],data[,'Contractor SLUG'])
-    nodes[which(!is.na(i.match)),2]<-data[i.match[!is.na(i.match)],'Contractor name']
+    i.match<-match(nodes[,2],data[,'contracting_authority_slug'])
+    nodes[which(!is.na(i.match)),2]<-data[i.match[!is.na(i.match)],'contracting_authority_name']
+    i.match<-match(nodes[,2],data[,'contractor_slug'])
+    nodes[which(!is.na(i.match)),2]<-data[i.match[!is.na(i.match)],'contractor_name']
     
     for (i in 1:nrow(nodes)) {
       if (nchar(nodes[i,2])>65) nodes[i,2]<-paste0(substr(nodes[i,2],1,65),"...")
     }
-    
+    #browser()
     sessionData$heightSankey<-nrow(relations)*25
     
     sankeyNetwork(Links = graphtable[,1:4], Nodes = nodes,
