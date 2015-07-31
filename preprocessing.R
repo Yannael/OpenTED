@@ -1,4 +1,5 @@
-library("RMySQL")
+library(RMySQL)
+library(queryBuildR)
 
 #TED contracts is from http://ted.openspending.org/data/ted-contracts.csv
 #Load contract awards
@@ -63,6 +64,14 @@ colnames(data)<-c("official_journal_date","award_notice_id","contracting_authori
 con <- dbConnect(RSQLite::SQLite(), "data/TED_award_notices.db")
 dbWriteTable(con,"awards",data,overwrite=T,row.names=F)
 dbDisconnect(con)
+
+#Create filters
+
+data[,3]<-factor(data[,3])
+data[,5]<-factor(data[,5])
+filters<-getFiltersFromTable(data)
+filters[[1]]$operators<-list('equal','not_equal',  'less', 'less_or_equal', 'greater','greater_or_equal')
+save(file='filters.Rdata',filters)
 
 #Grab CPV coes from OpenTed Github
 #rawfile<-getURL("https://raw.githubusercontent.com/opented/opented/master/cpvcodes/cpvcodes.csv")
