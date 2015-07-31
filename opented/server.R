@@ -3,7 +3,6 @@ library(htmlwidgets)
 library(queryBuildR)
 library(RMySQL)
 library(DT)
-library(RCurl)
 library(networkD3)
 
 shinyServer(function(input, output,session) {
@@ -18,6 +17,10 @@ shinyServer(function(input, output,session) {
     sessionData$nbRowsErrorMessage
   })
   
+  output$nbRowsErrorMessageSankey<-renderText({
+    sessionData$nbRowsErrorMessageSankey
+  })
+  
   observe({
     if (length(input$queryBuilderSQL)>0) {
       data<-loadData("data/TED_award_notices","awards",input$queryBuilderSQL)
@@ -27,58 +30,28 @@ shinyServer(function(input, output,session) {
   })
   
   output$queryBuilderWidget<-renderQueryBuildR({
-    isolate({data<-sessionData$awards[,c(1:4,6:7,9:12)]})
-    data[,3]<-factor(data[,3])
-    data[,5]<-factor(data[,5])
-    data[,9]<-factor(data[,9])
-    rules<-list(rules=list(
-      list(
-      id= 'contracting_authority_country',
-      operator= 'equal',
-      value='DE'
-      ),
-      list(
-        id= 'contract_value_euros',
-        operator= 'is_not_empty'
-      ),
-      list(
-        id= 'CPV_code',
-        operator= 'begins_with',
-        value='45'
-      ),
-      list(
-        id= 'official_journal_date',
-        operator= 'greater_or_equal',
-        value='2015-01-15'
-      )    
-    ))
-    filters<-getFiltersFromTable(data)
-    
-    data<-loadData("data/TED_award_notices","awards","contracting_authority_country='DE' and contract_value_euros<>'' and CPV_code like '45%' and official_journal_date>'2015-01-15'")
-    sessionData$awards<-data$data
-    sessionData$nbRowsErrorMessage<-data$nbRowsErrorMessage
-    
-    filters[[1]]$operators<-list('equal','not_equal',  'less', 'less_or_equal', 'greater','greater_or_equal','between')
+    rules<-""
+    filters<-initFilters
     queryBuildR(rules,filters)
   })
   
   #Returns the dataset in the form of a table
   output$awardTable<-DT::renderDataTable({
-    data<-sessionData$awards[,c(1,13,3:4,6:7,9:12)]
+    data<-sessionData$awards[,c(1,13,3:4,6:7,9:10,12)]
     colnames(data)<-as.vector(sapply(colnames(data),idToName))
-    action <- dataTableAjax(session, data,rownames=F)
+    action <- dataTableAjax(session, data)
     datatable(data, 
               selection = 'none',
               server=T,
-              rownames=F,
               escape=F,
               options = list(
                 dom= 'C<"clear">litp',
                 lengthMenu = list(c(10, 100, 1000), c('10', '100','1000')),pageLength = 10,
                 ajax = list(url = action),
                 columnDefs = list(
-                  list(width=c(120),targets=c(3,5)),
-                  list(width=c(70),targets=c(2,4,6:9)),
+                  list(visible=F,targets=c(0)),
+                  list(width=c(120),targets=c(4,6)),
+                  list(width=c(60),targets=c(1:3,5,7:9)),
                   list(className="dt-right",targets="_all")
                 )
               )
@@ -160,7 +133,6 @@ shinyServer(function(input, output,session) {
     for (i in 1:nrow(nodes)) {
       if (nchar(nodes[i,2])>65) nodes[i,2]<-paste0(substr(nodes[i,2],1,65),"...")
     }
-    #browser()
     sessionData$heightSankey<-nrow(relations)*25
     
     sankeyNetwork(Links = graphtable[,1:4], Nodes = nodes,
@@ -180,7 +152,7 @@ shinyServer(function(input, output,session) {
                  "Number of contractors:",br(),
                  "Total number of contracts:",br(),
                  "Number of contracts (values>0):",br(),
-                 "Total value of contracts (€)",br()
+                 "Total value of contracts (€):",br()
                )
         ),
         column(2,
@@ -196,7 +168,7 @@ shinyServer(function(input, output,session) {
       ,
       hr(),
       fluidRow(
-        textOutput("nbRowsErrorMessage"),
+        textOutput("nbRowsErrorMessageSankey"),
         align="center"
       ),
       tags$div(class="extraspace5"),
@@ -204,16 +176,12 @@ shinyServer(function(input, output,session) {
     )
   })
   
-  createArchive<-function() {
-    write.csv(sessionData$currentData[,-1], file="selection.csv", row.names=F)
-  }
-  
   output$downloadSelection <- downloadHandler(
     filename = function() {
       paste('data-opented-', Sys.Date(), '.csv', sep='')
     },
     content = function(con) {
-      write.csv(sessionData$currentData[,-1], con,row.names=F)
+      write.csv(sessionData$awards, con,row.names=F)
     }
   )
   
