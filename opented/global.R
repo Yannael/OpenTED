@@ -11,12 +11,14 @@ loadData<-function(db,tablename,sql) {
   nbrows<-dbGetQuery(condb,paste0("select count(*) from ",tablename," ",sql))
   limit<-""
   nbRowsErrorMessage<-""
-  if (nbrows>100000) {
-    limit<-" limit 100000"
-    nbRowsErrorMessage<-paste0("Warning: Your query returns ",nbrows," records The table below only includes the first 100000.")
+  if (nbrows>1000) {
+    limit<-" limit 1000"
+    nbRowsErrorMessage<-paste0("Note: The table below only includes the first 1000 records (out of ",nbrows,"). Refine selection using the filters above for a more focused set of results.")
   }
   data<-dbGetQuery(condb,paste0("select * from ",tablename," ",sql,limit))
   dbDisconnect(condb)
   list(data=data,nbRowsErrorMessage=nbRowsErrorMessage)
 }
 
+load('../filters.Rdata')
+initFilters<-filters
