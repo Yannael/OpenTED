@@ -3,12 +3,24 @@
 * This interface allows to more easily search the [TED (Tender Electronic Daily)](http://ted.europa.eu/) database of European public procurements.
 * Data are from [OpenTED](http://ted.openspending.org/), for the period 2012-01-31 / 2015-02-27. 
 
+#### Usage 
+
+* Example: Select awards notices for construction work in Germany in 2014, with award values higher than 2 million euros. Click on thumbnail below to see tutorial video.
+<br>
+<a href="http://www.dailymotion.com/video/x30u8db_open-ted-browsing-interface" target="_blank"><img src="http://www.dailymotion.com/thumbnail/video/x30u8db_open-ted-browsing-interface" 
+alt="IMAGE ALT TEXT HERE" width="480" height="360" border="10" align="center"/></a>
+
 #### Online interface 
 
 * [http://yleborgne.net/opented](http://yleborgne.net/opented)
 
+#### History
+
+* 2015/08/01: Added query builder
+* 2015/06/15: Added contract flows visualization
+* 2015/05/15: Initial version
+
 #### Notes
-* The interface may be a bit slow, since there are up to 1.5 million award notices. With all notices, delays up to 10 seconds may happen (with a good Internet connection...). Restrict the date range for faster results.
 * There are missing data in the award notices, and even erroneous data. This is independent of OpenTED data. To the best of our knowledge, data are the same as those available from the official TED EU site. Let us know if you spot any inconsistencies.
 
 #### Code
@@ -25,8 +37,4 @@
 #### Design/Implementation
 
 * [Yann-Aël Le Borgne](http://www.ulb.ac.be/di/map/yleborgn/)
-
-
-
-
 
