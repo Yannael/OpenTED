@@ -7,7 +7,7 @@ library(networkD3)
 shinyUI(
   fluidPage(    
     includeCSS('www/style.css'),
-    #tags$head(includeScript("statcounter.js")),
+    tags$head(includeScript("statcounter.js")),
     fluidRow(
       div(img(src="TEDbanner.png", height = 132, width = 1100), align="center")
     ),
@@ -33,10 +33,10 @@ shinyUI(
                column(12,
                       fluidRow(
                         hr(),
-                        h5(textOutput("nbRowsErrorMessage")),
                         div(downloadButton('downloadSelection', label = "Download selection (CSV)",class = NULL),
                             align="right"),
                         DT::dataTableOutput('awardTable'),
+                        h5(textOutput("nbRowsErrorMessage")),
                         tags$div(class="extraspace5")
                       )
                )
@@ -53,12 +53,13 @@ shinyUI(
                       fluidRow(
                         tags$div(class="extraspace5"),
                         h4(strong("Meanings of Common Procurement Vocabulary (CPV) codes")),
-                        div(DT::dataTableOutput('CPVTable'),align="center")
+                        div(DT::dataTableOutput('CPVTable'),align="center"),
+                        tags$div(class="extraspace5")
                       )
                )
                
       ),
-      tabPanel(h5(strong("What is this?")),
+      tabPanel(h5(strong("What is this interface?")),
                column(10,offset=1,
                       fluidRow(
                         tags$div(class="extraspace5"),
