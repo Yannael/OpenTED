@@ -11,20 +11,9 @@ font-family: Georgia, serif;
 font-size: 16px;
 } 
 
-.span4 {
-	min-width: 200px;
-	max-width: 200px;
-}
-
-.span8 {
-	min-width: 500px;
-	max-width: 500px;
-
-}
-
 .container-fluid {
-	min-width: 1300px;
-	max-width: 1300px;
+	min-width: 1100px;
+	max-width: 1100px;
 	float:none;
 	margin:0 auto;
 }
@@ -38,18 +27,6 @@ div.container-fluid {
 background-color: #FFFFFF;
 }
 
-ul.ColVis_collection {
-  width:250px;
-  margin-left:-110px;
-}
-
 #download {float:right;}
 
-.shiny-progress .bar {
-background-color: #4AA1FF;
-.opacity = 0.8;
-}
-.shiny-progress .progress {
-height:20px;
-}
 
