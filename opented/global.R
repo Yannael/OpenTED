@@ -8,17 +8,17 @@ levelsCPV<-levels(as.factor(CPVTable[,2]))
 loadData<-function(db,tablename,sql) {
   if (sql!="") sql<-paste0("where ",sql)
   condb<-dbConnect(RSQLite::SQLite(), paste0(db,".db"))
-  nbrows<-dbGetQuery(condb,paste0("select count(*) from ",tablename," ",sql))
+  nbrows<-dbGetQuery(condb,paste0("select count(*) from ",tablename," ",sql," order by official_journal_date asc"))
   limit<-""
   nbRowsErrorMessage<-""
   if (nbrows>1000) {
     limit<-" limit 1000"
-    nbRowsErrorMessage<-paste0("Note: The table below only includes the first 1000 records (out of ",nbrows,"). Refine selection using the filters above for a more focused set of results.")
+    nbRowsErrorMessage<-paste0("Note: Your query returns ",nbrows," records. Only the first 1000 were retrieved. Refine selection with filters for a more focused set of results.")
   }
   data<-dbGetQuery(condb,paste0("select * from ",tablename," ",sql,limit))
   dbDisconnect(condb)
   list(data=data,nbRowsErrorMessage=nbRowsErrorMessage)
 }
 
-load('../filters.Rdata')
+load('data/filters.Rdata')
 initFilters<-filters
