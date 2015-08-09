@@ -60,6 +60,9 @@ dir.create('data')
 #Define column names
 colnames(data)<-c("official_journal_date","award_notice_id","contracting_authority_country","contracting_authority_name","contracting_authority_slug","contractor_country","contractor_name","contractor_slug","contract_value_euros","number_offers_received","award_criteria","CPV_code","award_notice_id_link")
 
+#Order by date
+data<-data[order(data[,1]),]
+
 #Create a subset DB for fields of interests
 con <- dbConnect(RSQLite::SQLite(), "data/TED_award_notices.db")
 dbWriteTable(con,"awards",data,overwrite=T,row.names=F)
@@ -67,9 +70,10 @@ dbDisconnect(con)
 
 #Create filters
 
-data[,3]<-factor(data[,3])
-data[,5]<-factor(data[,5])
-filters<-getFiltersFromTable(data)
+data2<-data[,c(1:4,6:7,9:10,12)]
+data2[,3]<-factor(data2[,3])
+data2[,5]<-factor(data2[,5])
+filters<-getFiltersFromTable(data2)
 filters[[1]]$operators<-list('equal','not_equal',  'less', 'less_or_equal', 'greater','greater_or_equal')
 save(file='filters.Rdata',filters)
 
