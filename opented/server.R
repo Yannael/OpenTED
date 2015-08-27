@@ -42,7 +42,6 @@ shinyServer(function(input, output,session) {
     action <- dataTableAjax(session, data)
     datatable(data, 
               selection = 'none',
-              server=T,
               escape=F,
               options = list(
                 dom= 'C<"clear">litp',
@@ -56,7 +55,7 @@ shinyServer(function(input, output,session) {
                 )
               )
     )
-  })
+  },server=T)
   
   #Returns the dataset in the form of a table
   output$CPVTable<-DT::renderDataTable({
@@ -64,7 +63,6 @@ shinyServer(function(input, output,session) {
     if (!is.null(dim(data))) {
       action = dataTableAjax(session, data)
       widget = datatable(data, 
-                         server = TRUE, 
                          escape=F,
                          filter = 'top',
                          options = list(
@@ -82,7 +80,7 @@ shinyServer(function(input, output,session) {
       )
       widget
     }
-  })
+  },server=T)
   
   extractURL<-function(link) {
     strsplit(link,"'")[[1]][2]
@@ -91,14 +89,17 @@ shinyServer(function(input, output,session) {
   output$sankey<-renderSankeyNetwork({
     data<-sessionData$awards
     sessionData$nbContracts<-nrow(data)
-    data<-data[which(data[,'contract_value_euros']>0),]
-    sessionData$nbContractsMore0<-nrow(data)
+    #data<-data[which(data[,'contract_value_euros']>0),]
+    #browser()
+    valueMore0<-which(data[,'contract_value_euros']>0)
+    data[setdiff(1:nrow(data),valueMore0),'contract_value_euros']<- -1
+    sessionData$nbContractsMore0<-length(valueMore0)
     sessionData$totalValueContracts<-sum(data[,'contract_value_euros'])
     sessionData$nbAuthority<-length(unique(as.character(data[,'contracting_authority_slug'])))
     sessionData$nbContractors<-length(unique(as.character(data[,'contractor_slug'])))
     
     validate(
-      need(nrow(data)<1000, paste0("Number of contracts with value>0 is ",nrow(data), ", the maximum is 1000. Please refine selection."))
+      need(nrow(data)<=1000, paste0("Number of contracts with value>0 is ",nrow(data), ", the maximum is 1000. Please refine selection."))
     )
     
     i.NA<-which(data[,"contracting_authority_slug"]=="")
@@ -146,7 +147,7 @@ shinyServer(function(input, output,session) {
     fluidRow(
       fluidRow(
         strong("Summary"),p(),
-        column(3,
+        column(4,
                fluidRow(
                  "Number of contracting authority:",br(),
                  "Number of contractors:",br(),
@@ -155,7 +156,7 @@ shinyServer(function(input, output,session) {
                  "Total value of contracts (€):",br()
                )
         ),
-        column(2,
+        column(4,
                fluidRow(
                  sessionData$nbAuthority,br(),
                  sessionData$nbContractors,br(),
