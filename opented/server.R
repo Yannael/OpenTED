@@ -12,6 +12,8 @@ shinyServer(function(input, output,session) {
   data<-loadData("data/TED_award_notices","awards","")
   sessionData$awards<-data$data
   sessionData$nbRowsErrorMessage<-data$nbRowsErrorMessage
+  sessionData$queries<-queries
+  sessionData$queries.sql<-query.sql
   
   output$nbRowsErrorMessage<-renderText({
     sessionData$nbRowsErrorMessage
@@ -29,8 +31,71 @@ shinyServer(function(input, output,session) {
     }
   })
   
+  observe({
+    query<-input$queryid
+    if (length(query)>0) {
+    query<-substr(query,2,nchar(query))
+    if (query!="") {
+    sqlQuery<-sessionData$queries.sql[as.numeric(query)]
+    #session$sendCustomMessage(type='callbackHandlerQuery', sqlQuery)
+    data<-loadData("data/TED_award_notices","awards",sqlQuery)
+    sessionData$awards<-data$data
+    sessionData$nbRowsErrorMessage<-data$nbRowsErrorMessage
+    }
+    }
+  })
+  
+#   observe({
+#     if (length(input$checkAnswer)>0) {
+#       if (input$checkAnswer) {
+#         sqlQuery<-"contracting_authority_country = 'Netherlands' AND CPV_code LIKE('72%') AND official_journal_date >= '2013-01-01'"
+#         session$sendCustomMessage(type='callbackHandlerQuery', sqlQuery)
+#         data<-loadData("data/TED_award_notices","awards",sqlQuery)
+#         sessionData$awards<-data$data
+#         sessionData$nbRowsErrorMessage<-data$nbRowsErrorMessage
+#       }
+#     }
+#   })
+#   
+#   output$quest<-renderUI({
+#     if (length(sessionData$query)>0) {
+#       if (sessionData$query!="") {
+#     fluidRow(
+#       column(12,
+#              h4("Welcome to OpenTED browser! Ready for a quest? Try to find the TED awards for"),
+#              strong("Computer-related services in Netherlands from 2013"),
+#              p(),
+#              actionButton("checkAnswer",class="btn btn-primary", label = "This seems too hard... Give me the answer!"),
+#              p(),
+#              HTML("<a href='https://twitter.com/share' class='twitter-share-button' 
+#                                  data-url='http://bit.ly/1KiXFdm' data-text='Play with OpenTED! http://bit.ly/1MTTEeo Computer-related services in Netherlands from 2013 #opented #ted #opendata' data-count='none'>Tweet</a>
+#                                  <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';
+#                                  if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';
+#                                  fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>"),
+#              HTML('<div class="fb-like" data-href="https://developers.facebook.com/docs/plugins/" data-layout="standard" data-action="like" data-show-faces="true" data-share="true"></div>')
+#       )
+#     )
+#     }
+#     }
+#   })
+  
+#   output$filters<-renderText({
+#     if (length(sessionData$query)>0) {
+#       if (sessionData$query!="") {
+#         input$queryBuilderSQL$sql
+#       }
+#     }
+#   })
+  
   output$queryBuilderWidget<-renderQueryBuildR({
     rules<-""
+    query<-input$queryid
+    if (length(query)>0) {
+      query<-substr(query,2,nchar(query))
+      if (query!="") {
+        rules<-sessionData$queries[[as.numeric(query)]]
+      }
+    }
     filters<-initFilters
     queryBuildR(rules,filters)
   })
@@ -98,14 +163,25 @@ shinyServer(function(input, output,session) {
     sessionData$nbAuthority<-length(unique(as.character(data[,'contracting_authority_slug'])))
     sessionData$nbContractors<-length(unique(as.character(data[,'contractor_slug'])))
     
+    targetIsSource<-intersect(unique(as.character(data[,'contracting_authority_slug'])),unique(as.character(data[,'contractor_slug'])))
+    if (length(targetIsSource)>0) {
+      for (i in 1:length(targetIsSource)) {
+        i.match<-which(as.character(data[,'contractor_slug'])==targetIsSource[i])
+        data[i.match,'contractor_slug']<-paste0(targetIsSource[i],"-2")
+      }
+    }
     validate(
       need(nrow(data)<=1000, paste0("Number of contracts with value>0 is ",nrow(data), ", the maximum is 1000. Please refine selection."))
     )
     
     i.NA<-which(data[,"contracting_authority_slug"]=="")
-    if (length(i.NA)>0) data[i.NA,"contracting_authority_slug"]<-"NA"
+    if (length(i.NA)>0) data[i.NA,"contracting_authority_slug"]<-"unknown-authority"
     i.NA<-which(data[,"contractor_slug"]=="")
-    if (length(i.NA)>0) data[i.NA,"contractor_slug"]<-"NA"
+    if (length(i.NA)>0) data[i.NA,"contractor_slug"]<-"unknown-contractor"
+    i.NA<-which(data[,"contracting_authority_name"]=="")
+    if (length(i.NA)>0) data[i.NA,"contracting_authority_name"]<-"Unknown authority"
+    i.NA<-which(data[,"contractor_name"]=="")
+    if (length(i.NA)>0) data[i.NA,"contractor_name"]<-"Unknown contractor"
     
     data<-droplevels(data)
     pairscontracts<-paste(data$'contracting_authority_slug',data$'contractor_slug',sep="_")
@@ -115,7 +191,6 @@ shinyServer(function(input, output,session) {
     nNodes <- unique(unlist(strsplit(names(sumpairs[sort(sumpairs,ind=T,dec=T)$ix]),"_")))
     nodes <- data.frame(id = 1:length(nNodes),
                         names = nNodes)
-    
     relations <- (data[,c('contracting_authority_slug','contractor_slug')])
     relations[,1]<-match(relations[,1],nodes$names)                                 
     relations[,2]<-match(relations[,2],nodes$names)
