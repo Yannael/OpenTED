@@ -63,10 +63,17 @@ colnames(data)<-c("official_journal_date","award_notice_id","contracting_authori
 #Order by date
 data<-data[order(data[,1]),]
 
+
+countrycode<-read.csv("countrycodes.csv",sep="°",stringsAsFactors=F,header=F)
+countrycode<-matrix(unlist(sapply(countrycode,strsplit," - ")),252,2,byrow=T)
+data[,3]<-countrycode[match(data[,3],countrycode[,1]),2]
+data[,6]<-countrycode[match(data[,6],countrycode[,1]),2]
+
 #Create a subset DB for fields of interests
 con <- dbConnect(RSQLite::SQLite(), "data/TED_award_notices.db")
 dbWriteTable(con,"awards",data,overwrite=T,row.names=F)
 dbDisconnect(con)
+
 
 #Create filters
 
@@ -86,6 +93,106 @@ CPVTable[,5]<-iconv(CPVTable[,5], from="latin1" ,to="UTF-8")
 write.table(file="data/CPVTable.txt",CPVTable,row.names=F,col.names=F)
 
 
+#######
+#Webste lmottery
 
+dummy<-function() {
+  
+  cpvtable<-read.table("opented/data/CPVTable.txt",stringsAsFactors=F)
+  country <- c("Austria","Belgium","Bulgaria","Cyprus","Croatia","Czech Republic","Denmark","Estonia","Finland","France","Germany","Greece","Hungary","Ireland","Italy","Latvia","Lithuania","Luxembourg","Malta","Netherlands","Poland","Portugal","Romania","Slovakia","Slovenia","Spain","Sweden","United Kingdom")
+  cpv <- cpvtable[which(nchar(cpvtable[,4])==3),4:5]
+  years <- c("2012", "2013", "2014", "2012 to 2013", "2013 to 2014", "2012 to 2014")
+  
+  con <- dbConnect(RSQLite::SQLite(), "opented/data/TED_award_notices.db")
+  data<-dbReadTable(con,'awards')
+  
+  set.seed(2)
+  subset<-data[,c(1,3,12)]
+  
+  getyear<-function(d) {
+    strsplit(d,'-')[[1]][1]
+  }
+  
+  getcpv3<-function(cpv) {
+    substr(cpv,1,3)
+  }
+  
+  subset[,1]<-sapply(subset[,1],getyear)
+  subset[,3]<-sapply(subset[,3],getcpv3)
+  
+  uniquekey<-apply(subset,1,paste0,collapse="_")
+  nbawards<-tapply(uniquekey,uniquekey,length)
+  
+  i.select<-which(nbawards>50 & nbawards<500)
+  set.seed(2)
+  
+  splitID<-function(id) {strsplit(id,'_')[[1]]}
+  datakeep<-ldply(names(nbawards[i.select]),splitID)
+  
+  match.cpv<-match(datakeep[,3],cpv[,1])
+  i.rem<-which(is.na(match.cpv))
+  datakeep<-datakeep[-i.rem,]
+  match.cpv<-match.cpv[-i.rem]
+  
+  countries<-unique(datakeep[,2])
+  
+  nbc<-tapply(datakeep[,2],datakeep[,2],length)
+  i.rem<-c()
+  for (i in 1:length(countries)) {
+    if (nbc[countries[i]]<5) i.rem<-c(i.rem,which(datakeep[,2]==countries[i]))
+  }
+  datakeep<-datakeep[-i.rem,]
+  match.cpv<-match.cpv[-i.rem]
+  i.order<-sort(datakeep[,2],index=T)$ix
+  datakeep<-datakeep[i.order,]
+  match.cpv<-match.cpv[i.order]
+ 
+  countries<-sort(countries)  
+  onestringcountries<-paste0("'",paste0(countries,collapse="','"),"'")
+  nbAwardCountry<-tapply(datakeep[,2],datakeep[,2],length)
+  onestringSize<-paste0(nbAwardCountry,collapse=",")
+  offsetCountry<-c(1,1+as.numeric(cumsum(nbAwardCountry))[-length(nbAwardCountry)])
+  onestringOffset<-paste0(offsetCountry,collapse=",")
+  
+  query.text<-paste0(cpv[match.cpv,2]," in ",datakeep[,2]," in ",datakeep[,1])
+  onestring<-paste0("'",paste0(query.text,collapse="','"),"'")
+  
+  
+  query.sql<-paste0("contracting_authority_country ='",datakeep[,2],
+                    "' AND CPV_code LIKE('",datakeep[,3],
+                    "%') AND official_journal_date >= '",datakeep[,1],
+                    "-01-01' AND official_journal_date <= '",datakeep[,1],
+                    "-12-31'")
+  write.table(file="queries.sql",query.sql,col.names=F,row.names=F)
+  
+  queries<-list()
+  for (i in 1:nrow(datakeep)) {
+    queries<-c(queries,list(list(
+    condition= 'AND',
+    rules=list(list(
+      id= 'contracting_authority_country',
+      operator= 'equal',
+      value= datakeep[i,2]
+    ),
+    list(
+      id= 'CPV_code',
+      operator= 'begins_with',
+      value= datakeep[i,3]
+    ),
+    list(
+      id= 'official_journal_date',
+      operator= 'greater_or_equal',
+      value= paste0(datakeep[i,1],'-01-01')
+    ),
+    list(
+      id= 'official_journal_date',
+      operator= 'less_or_equal',
+      value= paste0(datakeep[i,1],'-12-31')
+    )
+    ))))
+  }
+  save(file="queries.sql",queries,query.sql)
+  
+}
 
 
