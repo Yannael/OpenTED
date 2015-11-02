@@ -34,58 +34,58 @@ shinyServer(function(input, output,session) {
   observe({
     query<-input$queryid
     if (length(query)>0) {
-    query<-substr(query,2,nchar(query))
-    if (query!="") {
-    sqlQuery<-sessionData$queries.sql[as.numeric(query)]
-    #session$sendCustomMessage(type='callbackHandlerQuery', sqlQuery)
-    data<-loadData("data/TED_award_notices","awards",sqlQuery)
-    sessionData$awards<-data$data
-    sessionData$nbRowsErrorMessage<-data$nbRowsErrorMessage
-    }
+      query<-substr(query,2,nchar(query))
+      if (query!="") {
+        sqlQuery<-sessionData$queries.sql[as.numeric(query)]
+        #session$sendCustomMessage(type='callbackHandlerQuery', sqlQuery)
+        data<-loadData("data/TED_award_notices","awards",sqlQuery)
+        sessionData$awards<-data$data
+        sessionData$nbRowsErrorMessage<-data$nbRowsErrorMessage
+      }
     }
   })
   
-#   observe({
-#     if (length(input$checkAnswer)>0) {
-#       if (input$checkAnswer) {
-#         sqlQuery<-"contracting_authority_country = 'Netherlands' AND CPV_code LIKE('72%') AND official_journal_date >= '2013-01-01'"
-#         session$sendCustomMessage(type='callbackHandlerQuery', sqlQuery)
-#         data<-loadData("data/TED_award_notices","awards",sqlQuery)
-#         sessionData$awards<-data$data
-#         sessionData$nbRowsErrorMessage<-data$nbRowsErrorMessage
-#       }
-#     }
-#   })
-#   
-#   output$quest<-renderUI({
-#     if (length(sessionData$query)>0) {
-#       if (sessionData$query!="") {
-#     fluidRow(
-#       column(12,
-#              h4("Welcome to OpenTED browser! Ready for a quest? Try to find the TED awards for"),
-#              strong("Computer-related services in Netherlands from 2013"),
-#              p(),
-#              actionButton("checkAnswer",class="btn btn-primary", label = "This seems too hard... Give me the answer!"),
-#              p(),
-#              HTML("<a href='https://twitter.com/share' class='twitter-share-button' 
-#                                  data-url='http://bit.ly/1KiXFdm' data-text='Play with OpenTED! http://bit.ly/1MTTEeo Computer-related services in Netherlands from 2013 #opented #ted #opendata' data-count='none'>Tweet</a>
-#                                  <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';
-#                                  if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';
-#                                  fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>"),
-#              HTML('<div class="fb-like" data-href="https://developers.facebook.com/docs/plugins/" data-layout="standard" data-action="like" data-show-faces="true" data-share="true"></div>')
-#       )
-#     )
-#     }
-#     }
-#   })
+  #   observe({
+  #     if (length(input$checkAnswer)>0) {
+  #       if (input$checkAnswer) {
+  #         sqlQuery<-"contracting_authority_country = 'Netherlands' AND CPV_code LIKE('72%') AND official_journal_date >= '2013-01-01'"
+  #         session$sendCustomMessage(type='callbackHandlerQuery', sqlQuery)
+  #         data<-loadData("data/TED_award_notices","awards",sqlQuery)
+  #         sessionData$awards<-data$data
+  #         sessionData$nbRowsErrorMessage<-data$nbRowsErrorMessage
+  #       }
+  #     }
+  #   })
+  #   
+  #   output$quest<-renderUI({
+  #     if (length(sessionData$query)>0) {
+  #       if (sessionData$query!="") {
+  #     fluidRow(
+  #       column(12,
+  #              h4("Welcome to OpenTED browser! Ready for a quest? Try to find the TED awards for"),
+  #              strong("Computer-related services in Netherlands from 2013"),
+  #              p(),
+  #              actionButton("checkAnswer",class="btn btn-primary", label = "This seems too hard... Give me the answer!"),
+  #              p(),
+  #              HTML("<a href='https://twitter.com/share' class='twitter-share-button' 
+  #                                  data-url='http://bit.ly/1KiXFdm' data-text='Play with OpenTED! http://bit.ly/1MTTEeo Computer-related services in Netherlands from 2013 #opented #ted #opendata' data-count='none'>Tweet</a>
+  #                                  <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';
+  #                                  if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';
+  #                                  fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>"),
+  #              HTML('<div class="fb-like" data-href="https://developers.facebook.com/docs/plugins/" data-layout="standard" data-action="like" data-show-faces="true" data-share="true"></div>')
+  #       )
+  #     )
+  #     }
+  #     }
+  #   })
   
-#   output$filters<-renderText({
-#     if (length(sessionData$query)>0) {
-#       if (sessionData$query!="") {
-#         input$queryBuilderSQL$sql
-#       }
-#     }
-#   })
+  #   output$filters<-renderText({
+  #     if (length(sessionData$query)>0) {
+  #       if (sessionData$query!="") {
+  #         input$queryBuilderSQL$sql
+  #       }
+  #     }
+  #   })
   
   output$queryBuilderWidget<-renderQueryBuildR({
     rules<-""

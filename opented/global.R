@@ -22,3 +22,5 @@ loadData<-function(db,tablename,sql) {
 
 load('data/filters.Rdata')
 initFilters<-filters
+
+load("queries.sql")
