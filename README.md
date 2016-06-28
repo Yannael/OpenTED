@@ -1,6 +1,6 @@
 #### Online interface for browsing/downloading OpenTED data
 
-See [README in `opented` folder](https://github.com/Yannael/OpenTED/tree/master/opented)
+See [README in `opented` folder](https://github.com/Yannael/OpenTED/tree/master/code)
 
 Online at:
 
