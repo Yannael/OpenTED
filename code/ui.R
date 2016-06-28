@@ -1,13 +1,7 @@
-library(shiny)
-library(queryBuildR)
-library(markdown)
-library(DT)
-library(networkD3)
-
 shinyUI(
   fluidPage(    
     includeCSS('www/style.css'),
-    tags$head(includeScript("statcounter.js")),
+    #tags$head(includeScript("statcounter.js")),
     #tags$head(HTML('<meta property="og:image" content="http://litpc45.ulb.ac.be/lyricsexplorer.png">')),
     #tags$head(HTML('<meta property="og:title" content="Lyrics Explorer">')),
     #tags$head(HTML('<meta property="og:url" content="http://yleborgne.net/opented">')),
@@ -32,10 +26,12 @@ shinyUI(
     hr(),
     uiOutput("quest"),
     hr(),
+    a(strong("Get to know Tender better, play the lottery!"),href="http://supplier.tenders.exposed/",target="_blank"),
+    tags$div(class="extraspace5"),
     tabsetPanel(
-      tabPanel(h5(strong("TED Award Notices 2012/2015")),
+      tabPanel(h5(strong("TED Award Notices 2006/2015")),
                fluidRow(
-                 column(11,offset=1,
+                 shiny::column(11,offset=1,
                         fluidRow(
                           queryBuildROutput("queryBuilderWidget",width="900px",height="100%"),
                           actionButton("queryApply", label = "Apply filters"),
@@ -57,26 +53,33 @@ shinyUI(
                         )
                  )
                ),
-               column(12,
+               shiny::column(12,
                       fluidRow(
                         hr(),
                         div(downloadButton('downloadSelection', label = "Download selection (CSV)",class = NULL),
                             align="right"),
+                        uiOutput("showVarUI"),
                         DT::dataTableOutput('awardTable'),
                         h5(textOutput("nbRowsErrorMessage")),
                         tags$div(class="extraspace5")
                       )
                )
       ),
-      tabPanel(h5(strong("Contract flows")),
-               column(10,offset=1,
+      tabPanel(h5(strong("Sankey diagram")),
+               shiny::column(10,offset=1,
                       tags$div(class="extraspace5"),
+                      fluidRow(
+                        shiny::column(3,
+                                      fluidRow(
+                                        selectInput('nbAwardsSankey', "Select number of contracts:", choices=c('50','100','200','All'), multiple = FALSE, selectize = TRUE)
+                                      )
+                        )),
                       uiOutput("sankeyUI"),
                       tags$div(class="extraspace5")
                )
       ),
       tabPanel(h5(strong("CPV codes")),
-               column(10,offset=1,
+               shiny::column(10,offset=1,
                       fluidRow(
                         tags$div(class="extraspace5"),
                         h4(strong("Meanings of Common Procurement Vocabulary (CPV) codes")),
@@ -87,7 +90,7 @@ shinyUI(
                
       ),
       tabPanel(h5(strong("What is this interface?")),
-               column(10,offset=1,
+               shiny::column(10,offset=1,
                       fluidRow(
                         tags$div(class="extraspace5"),
                         includeMarkdown("README.md")

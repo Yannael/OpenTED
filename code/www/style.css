@@ -1,3 +1,4 @@
+
 .extraspace{
   height:50px;
 }
@@ -20,7 +21,7 @@ font-size: 16px;
 
 body {
 font-family: Georgia, serif;
-background-color: #282828;
+background-color: #FFFFFF;
 } 
 
 div.container-fluid {
@@ -29,4 +30,11 @@ background-color: #FFFFFF;
 
 #download {float:right;}
 
+.shiny-progress .bar {
+background-color: #4AA1FF;
+.opacity = 0.8;
+}
+.shiny-progress .progress {
+height:20px;
+}
 
