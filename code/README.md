@@ -31,8 +31,9 @@
 * [OpenTED](http://ted.openspending.org)
 * [EIJC](http://www.journalismfund.eu/EIJC15)
 * © European Union, [http://ted.europa.eu](http://ted.europa.eu), 1998–2016
+* [BruFence: 'Scalable machine learning for automating defense system'](http://www.securit-brussels.be/project/brufence), a project funded by the Institute for the Encouragement of Scientific Research and Innovation of Brussels (INNOVIRIS, Brussels Region, Belgium)
 
 #### Design/Implementation
 
-* [Yann-Aël Le Borgne](http://www.ulb.ac.be/di/map/yleborgn/) - [Machine Learning Group](http://mlg.ulb.ac.be) - [Université Libre de Bruxelles](http://ulb.ac.be) - Belgium 
+* [Yann-Aël Le Borgne](https://www.linkedin.com/in/yannaelb) - [Machine Learning Group](http://mlg.ulb.ac.be) - [Université Libre de Bruxelles](http://ulb.ac.be) - Belgium 
 
