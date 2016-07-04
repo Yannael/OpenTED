@@ -30,8 +30,5 @@ RUN R -e "install.packages(c('shiny','markdown','DT','htmlwidgets','devtools'), 
 RUN R -e "devtools::install_github('yannael/networkD3')"
 RUN R -e "devtools::install_github('yannael/queryBuildR')"
 
-#MStartup script to start Shiny server
+#Startup script to start Shiny server
 ADD startupscript.sh /usr/bin/startupscript.sh
-
-
-

@@ -1,11 +1,12 @@
 shinyServer(function(input, output,session) {
   
+  #Reactive values in sessionData
   sessionData <- reactiveValues()
-  sessionData$heightSankey<-12500
-  data<-loadDataParquet("")
+  sessionData$heightSankey<-12500 #Default size (in pixel) fro Sankey network
+  data<-loadDataParquet(" YEAR=2015") #Load data
   sessionData$awards<-data$data
   sessionData$nbRowsErrorMessage<-data$nbRowsErrorMessage
-  sessionData$queries<-queries
+  sessionData$queries<-queries #Load queries (for lottery game)
   sessionData$queries.sql<-query.sql
   
   output$nbRowsErrorMessage<-renderText({
@@ -16,6 +17,7 @@ shinyServer(function(input, output,session) {
     sessionData$nbRowsErrorMessageSankey
   })
   
+  #When new filter is applied, execute SQL query and retrieve data
   observe({
     if (length(input$queryBuilderSQL)>0) {
       data<-loadDataParquet(input$queryBuilderSQL)
@@ -24,6 +26,7 @@ shinyServer(function(input, output,session) {
     }
   })
   
+  #When called from lottery game
   observe({
     query<-input$queryid
     if (length(query)>0) {
@@ -40,14 +43,16 @@ shinyServer(function(input, output,session) {
     }
   })
   
+  #Variable selection
   output$showVarUI<-renderUI({
     isolate({
       niceNames<-as.vector(sapply(colnames(sessionData$awards),idToName))
-      selectInput('showVar', 'Select variables to display', niceNames, 
-                  selected=niceNames[c(1:9)],multiple=TRUE, selectize=TRUE,width='1050px')
+      selectInput('showVar', 'Select additional variables to display', niceNames[c(11:length(niceNames))], 
+                  selected=c(),multiple=TRUE, selectize=TRUE,width='1050px')
     })
   })
   
+  #Query builder widget
   output$queryBuilderWidget<-renderQueryBuildR({
     rules<-""
     query<-input$queryid
@@ -67,9 +72,14 @@ shinyServer(function(input, output,session) {
   
   #Returns the dataset in the form of a table
   output$awardTable<-DT::renderDataTable({
-    if (length(input$showVar)>0) {
-      data<-sessionData$awards[,sapply(input$showVar,nameToId)]
-      colnames(data)<-input$showVar
+    #if (length(input$showVar)>=0) {
+      niceNames<-as.vector(sapply(colnames(sessionData$awards),idToName))
+      toShow<-c(niceNames[1:10],input$showVar)
+      data<-sessionData$awards[,sapply(toShow,nameToId)]
+      colnames(data)<-toShow
+      #newOrder<-c(3,4,1,9,5:8,10,2)
+      #if (ncol(data)>10)  newOrder<-c(newOrder,11:ncol(data))
+      #data<-data[,newOrder]
       action <- dataTableAjax(session, data)
       datatable(data, 
                 selection = 'none',
@@ -78,16 +88,15 @@ shinyServer(function(input, output,session) {
                   dom= 'C<"clear">litp',
                   lengthMenu = list(c(10, 100, 1000), c('10', '100','1000')),pageLength = 10,
                   ajax = list(url = action),
-                  #autoWidth = T,
                   columnDefs = list(
                     list(visible=F,targets=c(0)),
-                    list(width=c(150),targets=c(4,6)),
-                    list(width=c(60),targets=c(1:9)),
+                    list(width=c(150),targets=c(2,4,6)),
+                    list(width=c(60),targets=c(1:3,6,8:10)),
                     list(className="dt-right",targets="_all")
                   )
                 )
       )
-    }
+   # }
   },server=T)
   
   #Returns the dataset in the form of a table
@@ -119,25 +128,27 @@ shinyServer(function(input, output,session) {
     strsplit(link,"'")[[1]][2]
   }
   
+  #Create Sankey network
   output$sankey<-renderSankeyNetwork({
     
     nameSource<-'Contracting_Authority_Name'
     nameTarget<-'Contractor_Name'
     
-    nbContracts<-input$nbAwardsSankey
-    if (nbContracts=='All') nbContracts<-1000
-    nbContracts<-as.numeric(nbContracts)
+    #nbContracts<-input$nbAwardsSankey
+    #if (nbContracts=='All') nbContracts<-1000
+    #nbContracts<-as.numeric(nbContracts)
     
     data<-sessionData$awards
     
-    if (nbContracts>nrow(data)) nbContracts<-nrow(data)
-    data<-data[1:nbContracts,]
+    #if (nbContracts>nrow(data)) 
+    #nbContracts<-nrow(data)
+    #data<-data[1:nbContracts,]
     
     sessionData$nbContracts<-nrow(data)
     
     valueMore0<-which(data[,'Contract_Value_Euros']>0)
-    if (length(setdiff(1:nrow(data),valueMore0))>0) data[setdiff(1:nrow(data),valueMore0),'Contract_Value_Euros']<- -1
-    #if (length(valueMore0)>0) data[valueMore0,'Contract_Value_Euros']<- log10(data[valueMore0,'Contract_Value_Euros'])
+    if (length(setdiff(1:nrow(data),valueMore0))>0) data[setdiff(1:nrow(data),valueMore0),'Contract_Value_Euros']<- 1
+    #if (length(valueMore0)>0) data[valueMore0,'Contract_Value_Euros']<- log(data[valueMore0,'Contract_Value_Euros'])/log(2)
     sessionData$nbContractsMore0<-length(valueMore0)
     sessionData$totalValueContracts<-sum(data[,'Contract_Value_Euros'])
     sessionData$nbAuthority<-length(unique(as.character(data[,nameSource])))
@@ -185,7 +196,7 @@ shinyServer(function(input, output,session) {
     for (i in 1:nrow(nodes)) {
       if (nchar(nodes[i,2])>65) nodes[i,2]<-paste0(substr(nodes[i,2],1,65),"...")
     }
-    sessionData$heightSankey<-nrow(relations)*25
+    sessionData$heightSankey<-max(length(unique(as.character(data[,nameSource]))),length(unique(as.character(data[,nameTarget]))))*20
     sankeyNetwork(Links = graphtable[,1:4], Nodes = nodes,
                   Source = "source", Target = "target",
                   Value = "value", NodeID = "names",
@@ -193,6 +204,7 @@ shinyServer(function(input, output,session) {
                   nodePadding = 15,height=sessionData$heightSankey)
   })
   
+  #Output Sankey network
   output$sankeyUI<-renderUI({
     fluidRow(
        fluidRow(
