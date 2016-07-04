@@ -34,5 +34,5 @@
 
 #### Design/Implementation
 
-* [Yann-Aël Le Borgne](http://www.ulb.ac.be/di/map/yleborgn/)
+* [Yann-Aël Le Borgne](http://www.ulb.ac.be/di/map/yleborgn/) - [Machine Learning Group](http://mlg.ulb.ac.be) - [Université Libre de Bruxelles](http://ulb.ac.be) - Belgium 
 
