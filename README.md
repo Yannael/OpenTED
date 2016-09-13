@@ -9,7 +9,7 @@ Online at:
 #### Reproducibility
 
 * Original CSVs were taken from the [EU Open Data portal](https://data.europa.eu/euodp/en/data/dataset/ted-csv)
-* Data preprocessing: https://github.com/Yannael/OpenTED/blob/master/code/preprocessing.ipynb
+* Data preprocessing: https://github.com/Yannael/OpenTED/blob/master/preprocessing.ipynb
 
 #### Docker container:
 * Clone this repository
