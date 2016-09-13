@@ -3,7 +3,7 @@ shinyServer(function(input, output,session) {
   #Reactive values in sessionData
   sessionData <- reactiveValues()
   sessionData$heightSankey<-12500 #Default size (in pixel) fro Sankey network
-  data<-loadDataParquet(" YEAR=2015") #Load data
+  data<-loadDataParquet("") #Load data
   sessionData$awards<-data$data
   sessionData$nbRowsErrorMessage<-data$nbRowsErrorMessage
   sessionData$queries<-queries #Load queries (for lottery game)
@@ -72,14 +72,10 @@ shinyServer(function(input, output,session) {
   
   #Returns the dataset in the form of a table
   output$awardTable<-DT::renderDataTable({
-    #if (length(input$showVar)>=0) {
       niceNames<-as.vector(sapply(colnames(sessionData$awards),idToName))
       toShow<-c(niceNames[1:10],input$showVar)
       data<-sessionData$awards[,sapply(toShow,nameToId)]
       colnames(data)<-toShow
-      #newOrder<-c(3,4,1,9,5:8,10,2)
-      #if (ncol(data)>10)  newOrder<-c(newOrder,11:ncol(data))
-      #data<-data[,newOrder]
       action <- dataTableAjax(session, data)
       datatable(data, 
                 selection = 'none',
@@ -96,7 +92,6 @@ shinyServer(function(input, output,session) {
                   )
                 )
       )
-   # }
   },server=T)
   
   #Returns the dataset in the form of a table
