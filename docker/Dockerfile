@@ -19,8 +19,8 @@ WORKDIR $HOME
 
 #Install Spark
 #Precompiled with : mvn -Pyarn -Phadoop-2.6 -Dhadoop.version=2.6.0 -Dyarn.version=2.6.0 -DskipTests -Dscala-2.11 -Phive -Phive-thriftserver clean package
-RUN wget http://litpc45.ulb.ac.be/spark161_2.11_SparkR.tgz
-RUN tar xvzf spark161_2.11_SparkR.tgz
+RUN wget http://litpc45.ulb.ac.be/spark-2.0.0_Hadoop-2.6_Scala-2.11.tgz
+RUN tar xvzf spark-2.0.0_Hadoop-2.6_Scala-2.11.tgz
 
 ENV SPARK_HOME $HOME/spark
 
