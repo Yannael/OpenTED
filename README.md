@@ -30,7 +30,7 @@ Online at:
 
 ```
  cd docker
- docker built -t opented .
+ docker build -t opented .
 ```
 
 * Start container (from code folder):
