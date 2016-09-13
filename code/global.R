@@ -11,8 +11,8 @@ CPVTable<-read.table("data/CPVTable.txt",stringsAsFactors=F,colClasses=c("charac
 colnames(CPVTable)<-c("Original code","CPV plain code","NUM-digits", "Real Code", "Category content")
 levelsCPV<-levels(as.factor(CPVTable[,2]))
 
-#SPARK_HOME<-"/Users/yalb/spark"
-SPARK_HOME<-"/home/shiny/spark"
+SPARK_HOME<-"/Users/yalb/spark"
+#SPARK_HOME<-"/home/shiny/spark"
 Sys.setenv(SPARK_HOME=SPARK_HOME)
 Sys.setenv(PATH=paste0(SPARK_HOME,"/bin:",SPARK_HOME,"/sbin:",Sys.getenv("PATH")))
 
@@ -20,8 +20,7 @@ Sys.setenv(PATH=paste0(SPARK_HOME,"/bin:",SPARK_HOME,"/sbin:",Sys.getenv("PATH")
 library(SparkR)
 
 sparkEnvir <- list('spark.sql.parquet.binaryAsString'='true') #Needed to read strings from Parquet
-sc<-sparkR.init(master="local[4]",sparkEnvir=sparkEnvir)
-sqlContext <- sparkRSQL.init(sc) 
+sparkR.session(master="local[4]",sparkEnvir=sparkEnvir)
 
 if (!file.exists("/tmp/spark-events")) {
   dir.create("/tmp/spark-events")
@@ -29,15 +28,15 @@ if (!file.exists("/tmp/spark-events")) {
 
 TED_TABLE<-"ted"
 
-df <- read.df(sqlContext, "ted.parquet", "parquet")
-registerTempTable(df, TED_TABLE);
+df <- read.df("ted.parquet", "parquet")
+createOrReplaceTempView(df, TED_TABLE);
 
 loadDataParquet<-function(sql) {
   withProgress(min=1, max=4, expr={
     setProgress(message = 'Computing statistics, please wait...',
                 value=2)
   if (sql!="") sql<-paste0("where ",sql)
-  nbrows<-collect(sql(sqlContext,paste0("select count(*) from ",TED_TABLE," ",sql)))
+  nbrows<-collect(sql(paste0("select count(*) from ",TED_TABLE," ",sql)))
   limit<-""
   nbRowsErrorMessage<-""
   if (nbrows>1000) {
@@ -46,7 +45,7 @@ loadDataParquet<-function(sql) {
   }
   setProgress(message = 'Retrieving data, please wait...',
               value=3)
-  data<-collect(sql(sqlContext,paste0("select * from ",TED_TABLE," ",sql,limit)))
+  data<-collect(sql(paste0("select * from ",TED_TABLE," ",sql,limit)))
   })
   list(data=data,nbRowsErrorMessage=nbRowsErrorMessage)
 }
