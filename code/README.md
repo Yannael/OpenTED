@@ -2,6 +2,7 @@
 
 * This interface allows to more easily search the [TED (Tender Electronic Daily)](http://ted.europa.eu/) database of European public procurements.
 * Data are from [the European Union Open Data Portal](https://data.europa.eu/euodp/en/data/dataset/ted-csv), and span the period 2006-2015.
+* Check the [slides of the presentation](http://ulb.ac.be/di/map/yleborgn/pub/presentation/LeBorgne_ECML-SoGood2016_OpenTED.pdf) at [ECML/PKDD SoGood 2016](https://sites.google.com/site/ecmlpkdd2016sogood/)
 
 #### Usage 
 
@@ -16,6 +17,7 @@
 
 #### History
 
+* 2016/09/15: Import update of official TED data, 2006-2015 - Version 2.1 (http://data.europa.eu/euodp/repository/ec/dg-grow/mapps/TED(csv)_data_information.pdf) 
 * 2016/07/04: Import of official TED data, 2006-2015 (https://data.europa.eu/euodp/en/data/dataset/ted-csv)
 * 2015/08/01: Added query builder
 * 2015/06/15: Added contract flows visualization
