@@ -40,8 +40,8 @@ loadDataParquet<-function(sql) {
   nbrows<-collect(sql(sqlContext,paste0("select count(*) from ",TED_TABLE," ",sql)))
   limit<-""
   nbRowsErrorMessage<-""
-  if (nbrows>10000) {
-    limit<-" limit 10000"
+  if (nbrows>1000) {
+    limit<-" limit 1000"
     nbRowsErrorMessage<-paste0("Note: Your query returns ",nbrows," records. Only the first 1000 were retrieved. Refine selection with filters for a more focused set of results.")
   }
   setProgress(message = 'Retrieving data, please wait...',
