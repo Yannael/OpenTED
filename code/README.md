@@ -2,7 +2,7 @@
 
 * This interface allows to more easily search the [TED (Tender Electronic Daily)](http://ted.europa.eu/) database of European public procurements.
 * Data are from [the European Union Open Data Portal](https://data.europa.eu/euodp/en/data/dataset/ted-csv), and span the period 2006-2015.
-* Check the [slides of the presentation](http://ulb.ac.be/di/map/yleborgn/pub/presentation/LeBorgne_ECML-SoGood2016_OpenTED.pdf) at [ECML/PKDD SoGood 2016](https://sites.google.com/site/ecmlpkdd2016sogood/)
+* Check the <a href="http://ulb.ac.be/di/map/yleborgn/pub/presentation/LeBorgne_ECML-SoGood2016_OpenTED.pdf" target="_blank">slides of the presentation</a> at <a href="https://sites.google.com/site/ecmlpkdd2016sogood/" target="_blank">ECML/PKDD SoGood 2016</a>.
 
 #### Usage 
 
@@ -38,4 +38,3 @@
 #### Design/Implementation
 
 * [Yann-Aël Le Borgne](https://www.linkedin.com/in/yannaelb) - [Machine Learning Group](http://mlg.ulb.ac.be) - [Université Libre de Bruxelles](http://ulb.ac.be) - Belgium 
-

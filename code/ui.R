@@ -8,7 +8,7 @@ shinyUI(
                 });"),
     tags$input(id = 'queryid', type = 'text', style = 'display:none;'),
     fluidRow(
-      div(img(src="TEDbanner.png", height = 132, width = 1100), align="center")
+      div(img(src="TEDbanner.png", height = 132, width = 1000), align="center")
     ),
     br(),
     hr(),
@@ -17,6 +17,16 @@ shinyUI(
     a(strong("Get to know Tender better, play the lottery!"),href="http://supplier.tenders.exposed/",target="_blank"),
     tags$div(class="extraspace5"),
     tabsetPanel(
+      tabPanel(h5(strong("Welcome!")),
+               fluidRow(
+                 shiny::column(10,offset=1,div(style = "font-size: 120%;text-align: justify;",
+                               fluidRow(
+                                 tags$div(class="extraspace5"),
+                                 includeMarkdown("welcome.md")
+                               ))
+                 )
+               )
+      ),
       tabPanel(h5(strong("TED Award Notices 2006-2015")),
                fluidRow(
                  shiny::column(11,offset=1,
@@ -72,11 +82,11 @@ shinyUI(
                
       ),
       tabPanel(h5(strong("What is this interface?")),
-               shiny::column(10,offset=1,
+               shiny::column(10,offset=1,div(style = "font-size: 120%",
                       fluidRow(
                         tags$div(class="extraspace5"),
                         includeMarkdown("README.md")
-                      )
+                      ))
                )
       )
     ),
